@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:salon/Screens/Auth_Screens/login.dart';
 // import 'package:salon/Onboarding/onboarding.dart';
-import 'package:salon/login.dart';
+
 // import 'package:salon/maps.dart';
 
 void main() {
