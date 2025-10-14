@@ -5,14 +5,14 @@ import 'package:salon/Screens/Auth_Screens/Widgets/phonenumber.dart';
 import 'package:salon/Screens/Auth_Screens/Widgets/termscheckbox.dart';
 import 'package:salon/Screens/Auth_Screens/otp_screen.dart';
 
-class LoginScren extends StatefulWidget {
-  const LoginScren({super.key});
+class LoginScreen extends StatefulWidget {
+  const LoginScreen({super.key});
 
   @override
-  State<LoginScren> createState() => _LoginScrenState();
+  State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScrenState extends State<LoginScren> {
+class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _phoneController = TextEditingController();
   bool _agreeToTerms = false;
   bool _isLoading = false;
@@ -65,9 +65,7 @@ class _LoginScrenState extends State<LoginScren> {
         // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(
-          builder: (context) => OTPScreen(
-            phoneNumber: _phoneController.text,
-          ),
+          builder: (context) => OTPScreen(phoneNumber: _phoneController.text),
         ),
       );
     });
@@ -86,61 +84,65 @@ class _LoginScrenState extends State<LoginScren> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 40),
-              const AppHeader(),
-              const SizedBox(height: 60),
-              const Text(
-                'Create Account',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w600,
-                  color: Colors.black,
+          child: SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 40),
+                const AppHeader(),
+                const SizedBox(height: 60),
+                const Text(
+                  'Create Account',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 24),
-              PhoneInputField(controller: _phoneController),
-              const SizedBox(height: 20),
-              TermsCheckbox(
-                value: _agreeToTerms,
-                onChanged: (value) {
-                  setState(() => _agreeToTerms = value ?? false);
-                },
-                onLearnMore: () {
-                  _showSnackBar('Opening Terms and Conditions');
-                },
-              ),
-              const SizedBox(height: 24),
-              PrimaryButton(
-                text: 'Get OTP',
-                onPressed: _isButtonEnabled ? _validateAndGetOTP : () {},
-                isLoading: _isLoading,
-                backgroundColor: _isButtonEnabled
-                    ? const Color.fromRGBO(226, 36, 36, 1.0)
-                    : Colors.grey, // Disabled color
-              ),
-              const Spacer(),
-              Center(
-                child: GestureDetector(
-                  onTap: _goToVendorSignup,
-                  child: Text(
-                    'Become a Vendor?',
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.blue[600],
-                      decoration: TextDecoration.underline,
-                      fontWeight: FontWeight.w500,
+                const SizedBox(height: 24),
+                PhoneInputField(controller: _phoneController),
+                const SizedBox(height: 20),
+                TermsCheckbox(
+                  value: _agreeToTerms,
+                  onChanged: (value) {
+                    setState(() => _agreeToTerms = value ?? false);
+                  },
+                  onLearnMore: () {
+                    _showSnackBar('Opening Terms and Conditions');
+                  },
+                ),
+                const SizedBox(height: 24),
+                PrimaryButton(
+                  text: 'Get OTP',
+                  onPressed: _isButtonEnabled ? _validateAndGetOTP : () {},
+                  isLoading: _isLoading,
+                  backgroundColor: _isButtonEnabled
+                      ? const Color.fromRGBO(226, 36, 36, 1.0)
+                      : Colors.grey, // Disabled color
+                ),
+                // const Spacer(),
+                const SizedBox(height: 180),
+                Center(
+                  child: GestureDetector(
+                    onTap: _goToVendorSignup,
+                    child: Text(
+                      'Become a Vendor?',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.blue[600],
+                        decoration: TextDecoration.underline,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 30),
-            ],
+                // const SizedBox(height: 30),
+              ],
+            ),
           ),
         ),
       ),

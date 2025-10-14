@@ -76,7 +76,7 @@ class _OTPScreenState extends State<OTPScreen> {
       context,
       MaterialPageRoute(
         builder: (context) => ProfileScreen(
-          // phoneNumber: widget.phoneNumber,
+          phoneNumber: widget.phoneNumber,
         ),
       ),
     );
