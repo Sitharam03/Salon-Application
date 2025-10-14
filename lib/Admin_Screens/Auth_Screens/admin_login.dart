@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:salon/Admin_Screens/Auth_Screens/admin_otp.dart';
 import 'package:salon/Customer_Screens/Auth_Screens/Widgets/app_header.dart';
 import 'package:salon/Customer_Screens/Auth_Screens/Widgets/button.dart';
 import 'package:salon/Customer_Screens/Auth_Screens/Widgets/phonenumber.dart';
 import 'package:salon/Customer_Screens/Auth_Screens/Widgets/termscheckbox.dart';
-import 'package:salon/Customer_Screens/Auth_Screens/otp_screen.dart';
 
 class AdminLogin extends StatefulWidget {
   const AdminLogin({super.key});
@@ -65,7 +65,7 @@ class _AdminLoginState extends State<AdminLogin> {
         // ignore: use_build_context_synchronously
         context,
         MaterialPageRoute(
-          builder: (context) => OTPScreen(phoneNumber: _phoneController.text),
+          builder: (context) => AdminOtp(phoneNumber: _phoneController.text),
         ),
       );
     });
