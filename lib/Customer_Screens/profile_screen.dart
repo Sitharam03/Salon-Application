@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:salon/Screens/Auth_Screens/Widgets/button.dart';
-import 'package:salon/Screens/Auth_Screens/Widgets/text_input_field.dart';
-import 'package:salon/Screens/homescreen.dart';
+import 'package:salon/Customer_Screens/Auth_Screens/Widgets/button.dart';
+import 'package:salon/Customer_Screens/Auth_Screens/Widgets/text_input_field.dart';
+import 'package:salon/Customer_Screens/homescreen.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String phoneNumber;

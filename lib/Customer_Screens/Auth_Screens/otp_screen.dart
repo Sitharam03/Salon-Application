@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:salon/Screens/Auth_Screens/Widgets/app_header.dart';
-import 'package:salon/Screens/Auth_Screens/Widgets/button.dart';
-import 'package:salon/Screens/Auth_Screens/Widgets/otpinputfield.dart';
-import 'package:salon/Screens/profile_screen.dart';
+import 'package:salon/Customer_Screens/Auth_Screens/Widgets/app_header.dart';
+import 'package:salon/Customer_Screens/Auth_Screens/Widgets/button.dart';
+import 'package:salon/Customer_Screens/Auth_Screens/Widgets/otpinputfield.dart';
+import 'package:salon/Customer_Screens/profile_screen.dart';
 
 class OTPScreen extends StatefulWidget {
   const OTPScreen({super.key, required this.phoneNumber});

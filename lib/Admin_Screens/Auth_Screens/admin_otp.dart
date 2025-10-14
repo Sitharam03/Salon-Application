@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:salon/Admin_Screens/success_screen.dart';
-import 'package:salon/Screens/Auth_Screens/Widgets/app_header.dart';
-import 'package:salon/Screens/Auth_Screens/Widgets/button.dart';
-import 'package:salon/Screens/Auth_Screens/Widgets/otpinputfield.dart';
+import 'package:salon/Customer_Screens/Auth_Screens/Widgets/app_header.dart';
+import 'package:salon/Customer_Screens/Auth_Screens/Widgets/button.dart';
+import 'package:salon/Customer_Screens/Auth_Screens/Widgets/otpinputfield.dart';
 
 class AdminOtp extends StatefulWidget {
   const AdminOtp({super.key, required this.phoneNumber});

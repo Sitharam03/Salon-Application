@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:salon/Screens/Auth_Screens/login.dart';
+import 'package:salon/Customer_Screens/Auth_Screens/login.dart';
 // import 'package:salon/Screens/Auth_Screens/login.dart';
 // import 'package:salon/Onboarding/onboarding.dart';
 
