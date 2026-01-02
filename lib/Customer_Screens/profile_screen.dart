@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salon/Customer_Screens/Auth_Screens/Widgets/button.dart';
 import 'package:salon/Customer_Screens/Auth_Screens/Widgets/text_input_field.dart';
-import 'package:salon/Customer_Screens/homescreen.dart';
+// import 'package:salon/Customer_Screens/homescreen.dart';
+import 'package:salon/maps.dart';
 
 class ProfileScreen extends StatefulWidget {
   final String phoneNumber;
@@ -113,7 +114,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         // On success, go to next screen
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (c) => const HomeScreen()),
+          MaterialPageRoute(builder: (c) => const LocationSelectionScreen()),
         );
       });
     } else {
