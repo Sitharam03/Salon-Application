@@ -1,4 +1,7 @@
 import 'package:get/get.dart';
+import 'package:salon/app/modules/services/bindings/services_binding.dart';
+import 'package:salon/app/modules/services/views/services_view.dart';
+import 'package:salon/app/modules/services/views/add_service_view.dart';
 import 'package:salon/app/modules/admin/bindings/admin_binding.dart';
 import 'package:salon/app/modules/admin/bindings/admin_signup_binding.dart';
 import 'package:salon/app/modules/admin/views/admin_login_view.dart';
@@ -108,6 +111,16 @@ class AppPages {
       name: AppRoutes.ADMIN_DASHBOARD,
       page: () => const AdminDashboardView(),
       binding: AdminDashboardBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.SERVICES,
+      page: () => const ServicesView(),
+      binding: ServicesBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.ADD_SERVICE,
+      page: () => const AddServiceView(),
+      binding: ServicesBinding(),
     ),
   ];
 }

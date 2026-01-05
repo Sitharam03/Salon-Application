@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salon/app/modules/admin_dashboard/controllers/admin_dashboard_controller.dart';
+import 'package:salon/app/modules/services/views/services_view.dart';
 import 'package:salon/app/widgets/admin_bottom_nav_bar.dart';
 
 class AdminDashboardView extends GetView<AdminDashboardController> {
@@ -14,14 +15,14 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
         // backgroundColor: const Color(0xFFF8F9FA),
         elevation: 0,
         automaticallyImplyLeading: false,
-        title: const Text(
-          'Dashboard',
-          style: TextStyle(
+        title: Obx(() => Text(
+          controller.selectedIndex.value == 1 ? 'Services' : 'Dashboard',
+          style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
             color: Color(0xFF1E232C),
           ),
-        ),
+        )),
         actions: [
           Center(child: _buildHeaderIcon(Icons.notifications_none, hasBadge: true)),
           const SizedBox(width: 12),
@@ -31,181 +32,191 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           const SizedBox(width: 20),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header moved to AppBar
-
-                
-                // Welcome Text
-                const Text(
-                  'Welcome back,',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                const Row(
-                  children: [
-                    Text(
-                      'Hi, User',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E232C),
-                      ),
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      '👋',
-                      style: TextStyle(fontSize: 24),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 32),
-                
-                // Today's Client's
-                const Text(
-                  "Today's Client's",
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E232C),
-                  ),
-                ),
-                const SizedBox(height: 16),
-                
-                // Stats Row
-                const Row(
-                  children: [
-                    Expanded(
-                      child: _StatsCard(
-                        title: 'SCHEDULED',
-                        count: '0',
-                        color: Color(0xFFFFC107), // Amber/Yellow
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: _StatsCard(
-                        title: 'COMPLETED',
-                        count: '0',
-                        color: Color(0xFF00C569), // Green
-                      ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: _StatsCard(
-                        title: 'REJECTED',
-                        count: '0',
-                        color: Color(0xFFF75555), // Red
-                      ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 32),
-                
-                // All Requests Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      'All Requests',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E232C),
-                      ),
-                    ),
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.grey[300]!),
-                      ),
-                      child: const Row(
-                        children: [
-                          Text(
-                            'Filters',
-                            style: TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w500,
-                              color: Colors.black87,
-                            ),
-                          ),
-                          SizedBox(width: 4),
-                          Icon(Icons.filter_list, size: 16, color: Colors.black87),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-                
-                const SizedBox(height: 20),
-                
-                // Empty State
-                Container(
-                  width: double.infinity,
-                  height: 300,
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.5),
-                    borderRadius: BorderRadius.circular(20),
-                    border: DashedBorder.all(
-                      color: Colors.grey[300]!,
-                      width: 1.5,
-                      dashSpace: 8, // Roughly creating dashed effect visually
-                    ),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(16),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[100],
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(Icons.inbox_outlined, size: 32, color: Colors.grey),
-                      ),
-                      const SizedBox(height: 16),
-                      Text(
-                        'No Pending Requests',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.grey[700],
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'New appointments will appear here.',
-                        style: TextStyle(
-                          fontSize: 14,
-                          color: Colors.grey[500],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                const SizedBox(height: 20),
-              ],
-            ),
-          ),
-        ),
-      ),
+      body: Obx(() {
+        switch (controller.selectedIndex.value) {
+          case 0:
+            return _buildDashboardHome();
+          case 1:
+            return const ServicesView();
+          default:
+            return _buildDashboardHome(); // Placeholder for other tabs
+        }
+      }),
       bottomNavigationBar: Obx(
         () => AdminBottomNavBar(
           currentIndex: controller.selectedIndex.value,
           onTap: controller.changeTabIndex,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildDashboardHome() {
+    return SafeArea(
+      child: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Welcome Text
+              const Text(
+                'Welcome back,',
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              const SizedBox(height: 4),
+              const Row(
+                children: [
+                  Text(
+                    'Hi, User',
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E232C),
+                    ),
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    '👋',
+                    style: TextStyle(fontSize: 24),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 32),
+              
+              // Today's Client's
+              const Text(
+                "Today's Client's",
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF1E232C),
+                ),
+              ),
+              const SizedBox(height: 16),
+              
+              // Stats Row
+              const Row(
+                children: [
+                  Expanded(
+                    child: _StatsCard(
+                      title: 'SCHEDULED',
+                      count: '0',
+                      color: Color(0xFFFFC107), // Amber/Yellow
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: _StatsCard(
+                      title: 'COMPLETED',
+                      count: '0',
+                      color: Color(0xFF00C569), // Green
+                    ),
+                  ),
+                  SizedBox(width: 12),
+                  Expanded(
+                    child: _StatsCard(
+                      title: 'REJECTED',
+                      count: '0',
+                      color: Color(0xFFF75555), // Red
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 32),
+              
+              // All Requests Header
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'All Requests',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1E232C),
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.grey[300]!),
+                    ),
+                    child: const Row(
+                      children: [
+                        Text(
+                          'Filters',
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(width: 4),
+                        Icon(Icons.filter_list, size: 16, color: Colors.black87),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              
+              const SizedBox(height: 20),
+              
+              // Empty State
+              Container(
+                width: double.infinity,
+                height: 300,
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.5),
+                  borderRadius: BorderRadius.circular(20),
+                  border: DashedBorder.all(
+                    color: Colors.grey[300]!,
+                    width: 1.5,
+                    dashSpace: 8, // Roughly creating dashed effect visually
+                  ),
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.grey[100],
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(Icons.inbox_outlined, size: 32, color: Colors.grey),
+                    ),
+                    const SizedBox(height: 16),
+                    Text(
+                      'No Pending Requests',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.grey[700],
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'New appointments will appear here.',
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey[500],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 20),
+            ],
+          ),
         ),
       ),
     );

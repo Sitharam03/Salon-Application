@@ -24,4 +24,6 @@ class AppRoutes {
   static const String ONBOARDING = '/onboarding';
   static const SHOP_DETAILS = '/shop-details';
   static const ADMIN_DASHBOARD = '/admin-dashboard';
+  static const SERVICES = '/services';
+  static const ADD_SERVICE = '/add-service';
 }
