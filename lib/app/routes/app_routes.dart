@@ -26,4 +26,6 @@ class AppRoutes {
   static const ADMIN_DASHBOARD = '/admin-dashboard';
   static const SERVICES = '/services';
   static const ADD_SERVICE = '/add-service';
+  static const SERVICE_PROVIDERS = '/service-providers';
+  static const ADD_SERVICE_PROVIDER = '/add-service-provider';
 }

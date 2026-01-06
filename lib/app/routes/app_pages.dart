@@ -25,6 +25,8 @@ import 'package:salon/app/modules/shop_details/bindings/shop_details_binding.dar
 import 'package:salon/app/modules/shop_details/views/shop_details_view.dart';
 import 'package:salon/app/modules/admin_dashboard/bindings/admin_dashboard_binding.dart';
 import 'package:salon/app/modules/admin_dashboard/views/admin_dashboard_view.dart';
+import 'package:salon/app/modules/service_providers/bindings/service_providers_binding.dart';
+import 'package:salon/app/modules/service_providers/views/add_service_provider_view.dart';
 import 'package:salon/app/routes/app_routes.dart';
 
 class AppPages {
@@ -121,6 +123,11 @@ class AppPages {
       name: AppRoutes.ADD_SERVICE,
       page: () => const AddServiceView(),
       binding: ServicesBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.ADD_SERVICE_PROVIDER,
+      page: () => const AddServiceProviderView(),
+      binding: ServiceProvidersBinding(),
     ),
   ];
 }

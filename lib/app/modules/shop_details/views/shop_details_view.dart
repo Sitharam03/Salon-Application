@@ -16,9 +16,9 @@ class ShopDetailsView extends GetView<ShopDetailsController> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Get.back(),
         ),
-        title: const Text(
-          'Shop Details',
-          style: TextStyle(
+        title: Text(
+          controller.isEditingProfile ? 'Edit Your Shop Details' : 'Shop Details',
+          style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.bold,
@@ -233,7 +233,7 @@ class ShopDetailsView extends GetView<ShopDetailsController> {
                                     mainAxisAlignment: MainAxisAlignment.center,
                                     children: [
                                       Text(
-                                        'Save Details',
+                                        'Save',
                                         style: TextStyle(
                                           fontSize: 16,
                                           fontWeight: FontWeight.bold,

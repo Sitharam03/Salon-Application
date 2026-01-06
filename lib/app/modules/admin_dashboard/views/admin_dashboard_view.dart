@@ -2,6 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salon/app/modules/admin_dashboard/controllers/admin_dashboard_controller.dart';
 import 'package:salon/app/modules/services/views/services_view.dart';
+import 'package:salon/app/modules/service_providers/views/service_providers_view.dart';
+import 'package:salon/app/modules/orders/views/orders_view.dart';
+import 'package:salon/app/modules/orders/controllers/orders_controller.dart';
+import 'package:salon/app/modules/orders/widgets/order_card.dart';
+import 'package:salon/app/modules/profile/views/profile_view.dart';
+import 'package:salon/app/modules/shop_details/views/shop_details_view.dart';
 import 'package:salon/app/widgets/admin_bottom_nav_bar.dart';
 
 class AdminDashboardView extends GetView<AdminDashboardController> {
@@ -16,7 +22,15 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
         elevation: 0,
         automaticallyImplyLeading: false,
         title: Obx(() => Text(
-          controller.selectedIndex.value == 1 ? 'Services' : 'Dashboard',
+          controller.selectedIndex.value == 1 
+          ? 'Services' 
+          : controller.selectedIndex.value == 2
+            ? 'Service Providers'
+            : controller.selectedIndex.value == 3
+              ? 'Orders' 
+              : controller.selectedIndex.value == 4
+                ? 'Shop' // Profile/Shop
+                : 'Dashboard',
           style: const TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -35,11 +49,17 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       body: Obx(() {
         switch (controller.selectedIndex.value) {
           case 0:
-            return _buildDashboardHome();
+            return _buildDashboardHome(context);
           case 1:
             return const ServicesView();
+          case 2:
+            return const ServiceProvidersView();
+          case 3:
+            return const OrdersView();
+          case 4:
+            return const ProfileView();
           default:
-            return _buildDashboardHome(); // Placeholder for other tabs
+            return _buildDashboardHome(context); // Placeholder for other tabs
         }
       }),
       bottomNavigationBar: Obx(
@@ -51,7 +71,10 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
     );
   }
 
-  Widget _buildDashboardHome() {
+  Widget _buildDashboardHome(BuildContext context) {
+    // Ensure OrdersController is available
+    final ordersController = Get.put(OrdersController());
+
     return SafeArea(
       child: SingleChildScrollView(
         child: Padding(
@@ -72,7 +95,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               const Row(
                 children: [
                   Text(
-                    'Hi, User',
+                    'Hi, Admin',
                     style: TextStyle(
                       fontSize: 28,
                       fontWeight: FontWeight.bold,
@@ -89,7 +112,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               
               const SizedBox(height: 32),
               
-              // Today's Client's
+              // Today's Client's (Dynamic Stats)
               const Text(
                 "Today's Client's",
                 style: TextStyle(
@@ -101,33 +124,33 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               const SizedBox(height: 16),
               
               // Stats Row
-              const Row(
+              Obx(() => Row(
                 children: [
-                  Expanded(
+                   Expanded(
                     child: _StatsCard(
-                      title: 'SCHEDULED',
-                      count: '0',
-                      color: Color(0xFFFFC107), // Amber/Yellow
+                      title: 'PENDING',
+                      count: ordersController.pendingCount.toString(),
+                      color: const Color(0xFFFFC107), // Amber/Yellow
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: _StatsCard(
-                      title: 'COMPLETED',
-                      count: '0',
-                      color: Color(0xFF00C569), // Green
+                    title: 'ACCEPTED',
+                      count: ordersController.acceptedCount.toString(),
+                      color: const Color(0xFF00C569), // Green
                     ),
                   ),
-                  SizedBox(width: 12),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: _StatsCard(
                       title: 'REJECTED',
-                      count: '0',
-                      color: Color(0xFFF75555), // Red
+                      count: ordersController.rejectedCount.toString(),
+                      color: const Color(0xFFF75555), // Red
                     ),
                   ),
                 ],
-              ),
+              )),
               
               const SizedBox(height: 32),
               
@@ -135,85 +158,129 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'All Requests',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E232C),
+                  GestureDetector(
+                    onTap: () {
+                      Get.to(() => const ShopDetailsView(), arguments: {'isEditing': true});
+                    },
+                    child: const Text(
+                      'All Requests',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E232C),
+                      ),
                     ),
                   ),
-                  Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: const Row(
-                      children: [
-                        Text(
-                          'Filters',
-                          style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.black87,
+                  // Action Buttons (Calendar & Filter)
+                  Row(
+                    mainAxisSize: MainAxisSize.min, // Ensure they take minimal width
+                    children: [
+                      // Calendar Icon
+                      // GestureDetector(
+                      //   onTap: () {
+                      //     showDatePicker(
+                      //       context: context,
+                      //       initialDate: ordersController.selectedDate.value,
+                      //       firstDate: DateTime(2020),
+                      //       lastDate: DateTime(2030),
+                      //     ).then((picked) {
+                      //       if (picked != null) {
+                      //         ordersController.changeDate(picked);
+                      //       }
+                      //     });
+                      //   },
+                      //   child: Container(
+                      //     padding: const EdgeInsets.all(8),
+                      //     decoration: BoxDecoration(
+                      //       color: Colors.white,
+                      //       borderRadius: BorderRadius.circular(8),
+                      //       border: Border.all(color: Colors.grey[300]!),
+                      //     ),
+                      //     child: const Icon(Icons.calendar_today, size: 20, color: Color(0xFF1E232C)),
+                      //   ),
+                      // ),
+                      const SizedBox(width: 8), 
+                      // Filter Dropdown
+                      PopupMenuButton<String>(
+                        onSelected: (value) => ordersController.changeFilter(value),
+                        itemBuilder: (context) => [
+                          const PopupMenuItem(value: 'All', child: Text('All Requests')),
+                          const PopupMenuItem(value: 'Pending', child: Text('Pending')),
+                          const PopupMenuItem(value: 'Accepted', child: Text('Accepted')),
+                          const PopupMenuItem(value: 'Rejected', child: Text('Rejected')),
+                        ],
+                        offset: const Offset(0, 40),
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(8),
+                            border: Border.all(color: Colors.grey[300]!),
+                          ),
+                          child: Row(
+                            children: [
+                              Obx(() => Text(
+                                ordersController.selectedFilter.value == 'All' ? 'Filters' : ordersController.selectedFilter.value,
+                                style: const TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.w500,
+                                  color: Colors.black87,
+                                ),
+                              )),
+                              const SizedBox(width: 4),
+                              const Icon(Icons.filter_list, size: 16, color: Colors.black87),
+                            ],
                           ),
                         ),
-                        SizedBox(width: 4),
-                        Icon(Icons.filter_list, size: 16, color: Colors.black87),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
                 ],
               ),
               
               const SizedBox(height: 20),
               
-              // Empty State
-              Container(
-                width: double.infinity,
-                height: 300,
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.5),
-                  borderRadius: BorderRadius.circular(20),
-                  border: DashedBorder.all(
-                    color: Colors.grey[300]!,
-                    width: 1.5,
-                    dashSpace: 8, // Roughly creating dashed effect visually
-                  ),
-                ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: Colors.grey[100],
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(Icons.inbox_outlined, size: 32, color: Colors.grey),
+              // Orders List (Replaced Empty State)
+              Obx(() {
+                if (ordersController.filteredOrders.isEmpty) {
+                  return Container(
+                    width: double.infinity,
+                    height: 200,
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.5),
+                      borderRadius: BorderRadius.circular(20),
+                      border: Border.all(color: Colors.grey[300]!),
                     ),
-                    const SizedBox(height: 16),
-                    Text(
-                      'No Pending Requests',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[700],
+                    child: Center(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.inbox_outlined, size: 48, color: Colors.grey[400]),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No requests found',
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                        ],
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    Text(
-                      'New appointments will appear here.',
-                      style: TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey[500],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+                  );
+                }
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: ordersController.filteredOrders.length,
+                  itemBuilder: (context, index) {
+                    final order = ordersController.filteredOrders[index];
+                    return OrderCard(
+                      order: order,
+                      onAccept: () => ordersController.acceptOrder(order.id),
+                      onReject: () => ordersController.rejectOrder(order.id),
+                    );
+                  },
+                );
+              }),
               const SizedBox(height: 20),
             ],
           ),
@@ -259,7 +326,7 @@ class _StatsCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20, horizontal: 16),
+      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
       decoration: BoxDecoration(
         color: color,
         borderRadius: BorderRadius.circular(16),

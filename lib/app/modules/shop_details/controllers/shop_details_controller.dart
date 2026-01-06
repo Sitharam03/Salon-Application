@@ -18,13 +18,44 @@ class ShopDetailsController extends GetxController {
   double? latitude;
   double? longitude;
 
+  bool isEditingProfile = false;
+
   @override
   void onInit() {
     super.onInit();
-    // Check for arguments passed from Maps
+    
+    // Check for arguments passed 
     if (Get.arguments != null) {
-      _updateLocationFromArguments(Get.arguments);
+      if (Get.arguments is Map) {
+         Map args = Get.arguments;
+         if (args['isEditing'] == true) {
+           isEditingProfile = true;
+         }
+         _updateLocationFromArguments(args.cast<String, dynamic>());
+      }
     }
+
+    // Mock Data init if empty (for testing/demo)
+    if (shopNameController.text.isEmpty && !isEditingProfile) {
+       // Only pre-fill if we assume this controller is singleton and persists.
+       // Actually for ProfileView we need this data initialized.
+       if (!isEditingProfile) {
+          // This will run when controller is first created.
+          // If created in Onboarding, empty is fine.
+          // If created in Dashboard -> Profile, we want mock data.
+          // We can check if we are coming from 'Profile' or duplicate the controller.
+          // For simplicity, let's just fill it with dummy data if it's empty
+          _fillMockData();
+       }
+    }
+  }
+
+  void _fillMockData() {
+      shopNameController.text = "Naturals Parlour";
+      ownerNameController.text = "Vignesh Kumar";
+      contactNumberController.text = "6123654789";
+      fullAddressController.text = "Plot No. 42, Hitech City Main Rd, near Ratnadeep Supermarket, Hyderabad";
+      selectedAddress.value = "Miyapur, Hyderabad";
   }
 
   void _updateLocationFromArguments(Map<String, dynamic> args) {
@@ -40,26 +71,7 @@ class ShopDetailsController extends GetxController {
   }
 
   void changeLocation() async {
-    // Navigate back to Maps, but we want to potentially get a result back if we are treating Maps as a picker
-    // Since our flow is Success -> Maps -> ShopDetails
-    // If we go back to Maps, we can just Get.toNamed(AppRoutes.MAPS) again or Get.back() if we came from there?
-    // Actually, based on the flow: success -> MAPS -> ShopDetails.
-    // If we click "Change", we should probably go back to MAPS.
-    // But MAPS "confirmLocation" does Get.toNamed(ShopDetails).
-    // So if we just Get.back(), we return to MAPS. MAPS is likely still in the stack?
-    // Let's check stack: MAPS -> SHOP_DETAILS.
-    // Yes, Get.back() should work to go back to maps to pick again.
-    // However, when MAPS is confirmed again, it will push SHOP_DETAILS again. 
-    // We might want to handle "result" or use Get.off.
-    
-    // Better approach: Go to Maps, and pass a flag that we are "editing" location? 
-    // Or just strictly follow the requested flow: 
-    // "when user click on the change it should go to maps screen and their user can update the loaction"
-    
-    // If we use Get.toNamed(AppRoutes.MAPS), we push a new Maps instance.
-    // Let's use Get.toNamed for now to be explicit, but we need to watch out for stack depth.
-    // Actually, if we came from Maps, Get.back() is the most natural "Change" action.
-    Get.back(); 
+    Get.toNamed(AppRoutes.MAPS); 
   }
 
   void saveDetails() {
@@ -74,9 +86,22 @@ class ShopDetailsController extends GetxController {
     // Mock API call
     Future.delayed(const Duration(seconds: 2), () {
       isLoading.value = false;
-      Get.snackbar('Success', 'Shop details saved successfully!');
-      // Navigate to Admin Dashboard
-      Get.offAllNamed(AppRoutes.ADMIN_DASHBOARD); 
+      
+      if (isEditingProfile) {
+        Get.back(); // Return to Profile View
+        Get.snackbar(
+          'Success', 
+          'Profile updated successfully',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.BOTTOM,
+          margin: const EdgeInsets.all(20),
+        );
+      } else {
+        Get.snackbar('Success', 'Shop details saved successfully!');
+       // Navigate to Admin Dashboard
+        Get.offAllNamed(AppRoutes.ADMIN_DASHBOARD); 
+      }
     });
   }
 
