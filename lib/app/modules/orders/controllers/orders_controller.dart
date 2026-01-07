@@ -14,7 +14,7 @@ class OrdersController extends GetxController {
       id: '1',
       customerName: 'Durga Prasad',
       customerPhone: '6123654789',
-      customerImage: 'assets/images/human_1.png', // Placeholder
+      customerImage: 'assets/profile_avatar.png', // Placeholder
       status: OrderStatus.pending,
       date: DateTime.now(),
       time: '10:00 PM',
@@ -24,7 +24,7 @@ class OrdersController extends GetxController {
       id: '2',
       customerName: 'Priya Sharma',
       customerPhone: '9876543210',
-      customerImage: 'assets/images/human_2.png', // Placeholder
+      customerImage: 'assets/profile_avatar.png', // Placeholder
       status: OrderStatus.accepted,
       date: DateTime.now(),
       time: '11:30 AM',
@@ -34,7 +34,7 @@ class OrdersController extends GetxController {
       id: '3',
       customerName: 'Arun Kumar',
       customerPhone: '6123654789',
-      customerImage: 'assets/images/human_3.png', // Placeholder
+      customerImage: 'assets/profile_avatar.png', // Placeholder
       status: OrderStatus.rejected,
       date: DateTime.now().subtract(const Duration(days: 1)),
       time: '10:00 PM',

@@ -9,6 +9,7 @@ import 'package:salon/app/modules/orders/widgets/order_card.dart';
 import 'package:salon/app/modules/profile/views/profile_view.dart';
 import 'package:salon/app/modules/shop_details/views/shop_details_view.dart';
 import 'package:salon/app/widgets/admin_bottom_nav_bar.dart';
+import 'package:salon/app/routes/app_routes.dart';
 
 class AdminDashboardView extends GetView<AdminDashboardController> {
   const AdminDashboardView({super.key});
@@ -17,34 +18,40 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA), // Light grey background
-      appBar: AppBar(
-        // backgroundColor: const Color(0xFFF8F9FA),
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        title: Obx(() => Text(
-          controller.selectedIndex.value == 1 
-          ? 'Services' 
-          : controller.selectedIndex.value == 2
-            ? 'Service Providers'
-            : controller.selectedIndex.value == 3
-              ? 'Orders' 
-              : controller.selectedIndex.value == 4
-                ? 'Shop' // Profile/Shop
-                : 'Dashboard',
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1E232C),
-          ),
-        )),
-        actions: [
-          Center(child: _buildHeaderIcon(Icons.notifications_none, hasBadge: true)),
-          const SizedBox(width: 12),
-          Center(child: _buildHeaderIcon(Icons.search)),
-          const SizedBox(width: 12),
-          Center(child: _buildHeaderIcon(Icons.more_vert)),
-          const SizedBox(width: 20),
-        ],
+      appBar: PreferredSize(
+        preferredSize: const Size.fromHeight(kToolbarHeight),
+        child: Obx(() {
+          return AppBar(
+            elevation: 0,
+            automaticallyImplyLeading: false,
+            title: Text(
+              controller.selectedIndex.value == 1 
+              ? 'Services' 
+              : controller.selectedIndex.value == 2
+                ? 'Service Providers'
+                : controller.selectedIndex.value == 3
+                  ? 'Orders'
+                  : controller.selectedIndex.value == 4
+                    ? 'Shop Details' 
+                    : 'Dashboard',
+              style: const TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E232C),
+              ),
+            ),
+            actions: [
+              Center(
+                child: _buildHeaderIcon(
+                  Icons.notifications_none, 
+                  hasBadge: true,
+                  onTap: () => Get.toNamed(AppRoutes.NOTIFICATIONS),
+                ),
+              ),
+              const SizedBox(width: 20),
+            ],
+          );
+        }),
       ),
       body: Obx(() {
         switch (controller.selectedIndex.value) {
@@ -59,7 +66,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           case 4:
             return const ProfileView();
           default:
-            return _buildDashboardHome(context); // Placeholder for other tabs
+            return _buildDashboardHome(context);
         }
       }),
       bottomNavigationBar: Obx(
@@ -67,6 +74,38 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           currentIndex: controller.selectedIndex.value,
           onTap: controller.changeTabIndex,
         ),
+      ),
+    );
+  }
+
+  Widget _buildHeaderIcon(IconData icon, {bool hasBadge = false, VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Stack(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: Colors.grey[200]!),
+            ),
+            child: Icon(icon, color: const Color(0xFF1E232C), size: 24),
+          ),
+          if (hasBadge)
+            Positioned(
+              right: 8,
+              top: 8,
+              child: Container(
+                width: 8,
+                height: 8,
+                decoration: const BoxDecoration(
+                  color: Color(0xFFE22424),
+                  shape: BoxShape.circle,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -171,34 +210,10 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
                       ),
                     ),
                   ),
-                  // Action Buttons (Calendar & Filter)
+                  // Action Buttons (Filter)
                   Row(
-                    mainAxisSize: MainAxisSize.min, // Ensure they take minimal width
+                    mainAxisSize: MainAxisSize.min, 
                     children: [
-                      // Calendar Icon
-                      // GestureDetector(
-                      //   onTap: () {
-                      //     showDatePicker(
-                      //       context: context,
-                      //       initialDate: ordersController.selectedDate.value,
-                      //       firstDate: DateTime(2020),
-                      //       lastDate: DateTime(2030),
-                      //     ).then((picked) {
-                      //       if (picked != null) {
-                      //         ordersController.changeDate(picked);
-                      //       }
-                      //     });
-                      //   },
-                      //   child: Container(
-                      //     padding: const EdgeInsets.all(8),
-                      //     decoration: BoxDecoration(
-                      //       color: Colors.white,
-                      //       borderRadius: BorderRadius.circular(8),
-                      //       border: Border.all(color: Colors.grey[300]!),
-                      //     ),
-                      //     child: const Icon(Icons.calendar_today, size: 20, color: Color(0xFF1E232C)),
-                      //   ),
-                      // ),
                       const SizedBox(width: 8), 
                       // Filter Dropdown
                       PopupMenuButton<String>(
@@ -241,7 +256,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               
               const SizedBox(height: 20),
               
-              // Orders List (Replaced Empty State)
+              // Orders List
               Obx(() {
                 if (ordersController.filteredOrders.isEmpty) {
                   return Container(
@@ -286,28 +301,6 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
           ),
         ),
       ),
-    );
-  }
-
-  Widget _buildHeaderIcon(IconData icon, {bool hasBadge = false}) {
-    return Stack(
-      children: [
-        Icon(icon, size: 28, color: const Color(0xFF1E232C)),
-        if (hasBadge)
-          Positioned(
-            right: 2,
-            top: 2,
-            child: Container(
-              width: 8,
-              height: 8,
-              decoration: const BoxDecoration(
-                color: Color(0xFFE22424),
-                shape: BoxShape.circle,
-                border: Border.fromBorderSide(BorderSide(color: Colors.white, width: 1.5)),
-              ),
-            ),
-          ),
-      ],
     );
   }
 }
@@ -361,34 +354,5 @@ class _StatsCard extends StatelessWidget {
         ],
       ),
     );
-  }
-}
-
-// Simple Custom Dashed Border Implementation for visual fidelity
-class DashedBorder extends Border {
-  final double dashSpace;
-
-  DashedBorder.all({
-    Color color = Colors.black,
-    double width = 1.0,
-    this.dashSpace = 4.0,
-  }) : super.fromBorderSide(BorderSide(color: color, width: width));
-
-  @override
-  void paint(
-    Canvas canvas,
-    Rect rect, {
-    TextDirection? textDirection,
-    BoxShape shape = BoxShape.rectangle,
-    BorderRadius? borderRadius,
-  }) {
-    // Custom painting for dashed border is complex, falling back to simple border for MVP
-    // unless strictly required. The design shows a dashed border.
-    // For simplicity in this iteration, keeping standard border but lighter.
-    // If strict compliance: would implement path metrics.
-    // Reverting to standard border with modification for "Dashed" look via standard flutter widgets creates complexity.
-    // Using a simpler approach: Standard border for now.
-    
-    super.paint(canvas, rect, textDirection: textDirection, shape: shape, borderRadius: borderRadius);
   }
 }

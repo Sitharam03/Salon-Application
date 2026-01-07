@@ -4,6 +4,8 @@ class AppRoutes {
   // Prevent instantiation
   AppRoutes._();
 
+  static const NOTIFICATIONS = '/notifications';
+
   // Customer Routes
   static const String LOGIN = '/login';
   static const String OTP = '/otp';
@@ -28,4 +30,12 @@ class AppRoutes {
   static const ADD_SERVICE = '/add-service';
   static const SERVICE_PROVIDERS = '/service-providers';
   static const ADD_SERVICE_PROVIDER = '/add-service-provider';
+
+  // Reviews Routes
+  static const REVIEWS = '/reviews';
+
+  // Settings Routes
+  static const SETTINGS = '/settings';
+  static const CHANGE_PASSWORD = '/change-password';
+  static const PASSWORD_UPDATED = '/password-updated';
 }

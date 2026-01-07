@@ -1,8 +1,14 @@
 import 'dart:io';
+import 'package:flutter/foundation.dart'; // For kIsWeb
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salon/app/modules/shop_details/controllers/shop_details_controller.dart';
-import 'package:salon/app/modules/shop_details/views/shop_details_view.dart';
+import 'package:salon/app/modules/profile/widgets/info_row.dart';
+import 'package:salon/app/modules/profile/widgets/profile_list_item.dart';
+import 'package:salon/app/modules/profile/widgets/cover_photo_carousel.dart';
+import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/modules/reviews/views/shop_reviews_view.dart';
+import 'package:salon/app/modules/admin_dashboard/controllers/admin_dashboard_controller.dart';
 
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
@@ -12,286 +18,325 @@ class ProfileView extends StatelessWidget {
     // Ensure controller is available
     final controller = Get.put(ShopDetailsController());
     
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          // Overlapping Images Section
-          SizedBox(
-            height: 280, // Height for combined cover + profile
-            child: Stack(
-              clipBehavior: Clip.none,
-              alignment: Alignment.topCenter,
-              children: [
-                // 1. Cover Carousel
-                SizedBox(
-                  height: 200,
-                  width: double.infinity,
-                  child: Stack(
-                    children: [
-                      // Image
-                      Image.asset(
-                        'assets/images/salon_cover.jpg', // Placeholder
-                        width: double.infinity,
-                        height: 200,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey[300],
-                            child: const Center(child: Icon(Icons.store, size: 50, color: Colors.grey)),
-                          );
-                        },
-                      ),
-                      // Navigation Arrows (Mock)
-                      Positioned(
-                        left: 10,
-                        top: 0,
-                        bottom: 0,
-                        child: Center(
-                          child: CircleAvatar(
-                            backgroundColor: Colors.black.withOpacity(0.3),
-                            radius: 16,
-                            child: const Icon(Icons.chevron_left, color: Colors.white),
-                          ),
-                        ),
-                      ),
+    return Scaffold(
+      backgroundColor: const Color(0xFFF8F9FA), // Light background
+      // appBar: AppBar(
+      //   title: const Text(
+      //     'Shop Details',
+      //     style: TextStyle(
+      //       color: Color(0xFF1E232C),
+      //       fontSize: 20,
+      //       fontWeight: FontWeight.bold,
+      //     ),
+      //   ),
+      //   centerTitle: true,
+      //   backgroundColor: Colors.transparent,
+      //   elevation: 0,
+      //   leading: IconButton(
+      //     icon: const Icon(Icons.arrow_back, color: Color(0xFF1E232C)),
+      //     onPressed: () {
+      //       // Navigate back to Home Dashboard logic
+      //        try {
+      //          final dashboardController = Get.find<AdminDashboardController>();
+      //          dashboardController.changeTabIndex(0);
+      //        } catch (e) {
+      //          Get.back();
+      //        }
+      //     },
+      //   ),
+      // ),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            
+            // 1. Header with Cover & Profile
+            SizedBox(
+              height: 260, // Increased height for cover photo
+              child: Stack(
+                children: [
+                   // Cover Photo Carousel
+                   Obx(() => Stack(
+                     children: [
+                       CoverPhotoCarousel(
+                         images: controller.coverImages.toList(),
+                         onAddTap: controller.takeCoverPhoto,
+                       ),
+                       // Edit/Add Cover Photo Button
                        Positioned(
-                        right: 10,
-                        top: 0,
-                        bottom: 0,
-                        child: Center(
-                          child: CircleAvatar(
-                            backgroundColor: Colors.black.withOpacity(0.3),
-                            radius: 16,
-                            child: const Icon(Icons.chevron_right, color: Colors.white),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-
-                // 2. Profile Picture (Overlapping)
-                Positioned(
-                  bottom: 0,
-                  child: Column(
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(4), // White border
-                        decoration: const BoxDecoration(
-                          color: Colors.white,
-                          shape: BoxShape.circle,
-                        ),
-                        child: CircleAvatar(
-                          radius: 60,
-                          backgroundColor: const Color(0xFFFFCCBC), // Light peach bg
-                          child: ClipOval(
-                            child: Image.asset(
-                              'assets/images/owner.png', // Placeholder
-                              width: 120,
-                              height: 120,
-                              fit: BoxFit.cover,
-                              errorBuilder: (c, e, s) => Image.asset('assets/images/human_1.png', width: 120, height: 120, fit: BoxFit.cover, errorBuilder: (c,e,s) => const Icon(Icons.person, size: 60, color: Colors.white)),
+                         top: 16,
+                         right: 16,
+                         child: GestureDetector(
+                           onTap: controller.takeCoverPhoto,
+                           child: Container(
+                             padding: const EdgeInsets.all(8),
+                             decoration: BoxDecoration(
+                               color: Colors.black.withOpacity(0.5),
+                               shape: BoxShape.circle,
+                             ),
+                             child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                           ),
+                         ),
+                       ),
+                         // Optional: Indicator dots could be added here if desired
+                     ],
+                   )),
+                  
+                  // Profile Image
+                   Positioned(
+                    bottom: 0,
+                    left: 0,
+                    right: 0,
+                    child: Center(
+                      child: Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: controller.pickProfileImage,
+                            child: Container(
+                              padding: const EdgeInsets.all(4), // White border effect
+                              decoration: const BoxDecoration(
+                                color: Colors.white,
+                                shape: BoxShape.circle,
+                              ),
+                              child: Obx(() {
+                                 final image = controller.profileImage.value;
+                                 if (image != null) {
+                                   return CircleAvatar(
+                                     radius: 60,
+                                     backgroundImage: kIsWeb 
+                                         ? NetworkImage(image.path) 
+                                         : FileImage(File(image.path)) as ImageProvider,
+                                     backgroundColor: Colors.grey[200],
+                                   );
+                                 }
+                                 return CircleAvatar(
+                                   radius: 60,
+                                   backgroundColor: Colors.grey[200],
+                                   backgroundImage: const AssetImage('assets/profile_avatar.png'),
+                                 );
+                              }),
                             ),
                           ),
-                        ),
+                           Positioned(
+                            bottom: 0,
+                            right: 0,
+                            child: GestureDetector(
+                              onTap: controller.pickProfileImage,
+                              child: Container(
+                                padding: const EdgeInsets.all(8),
+                                decoration: const BoxDecoration(
+                                  color: Color(0xFFE22424),
+                                  shape: BoxShape.circle,
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black12,
+                                      blurRadius: 4,
+                                      offset: Offset(0, 2),
+                                    ),
+                                  ],
+                                ),
+                                child: const Icon(Icons.edit, size: 16, color: Colors.white),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
-                ),
-                
-                // Edit Icon on Profile Pic REMOVED as requested
-              ],
-            ),
-          ),
-          
-          const SizedBox(height: 20),
-
-          // Shop Info
-          // Removed Obx as these controllers are NOT observables.
-          // If we want reactivity, we would need to wrap in GetBuilder or use Rx variables.
-          // For now, removing Obx fixes the error.
-          Column(
-            children: [
-              Text(
-                controller.shopNameController.text.isNotEmpty ? controller.shopNameController.text : 'Shop Name',
-                style: const TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E232C),
-                ),
-              ),
-              const SizedBox(height: 8),
-              
-              // selectedAddress IS observable, so we use Obx here
-              Obx(() => Text(
-                controller.selectedAddress.value.isNotEmpty ? controller.selectedAddress.value : 'Location',
-                style: const TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              )),
-              
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  ...List.generate(4, (index) => const Icon(Icons.star, color: Colors.amber, size: 20)),
-                   const Icon(Icons.star, color: Colors.grey, size: 20),
-                   const SizedBox(width: 8),
-                   const Text(
-                     '4.2',
-                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
-                   ),
                 ],
               ),
-            ],
-          ),
-          
-          const SizedBox(height: 30),
-
-          // Details Cards
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // Name
+            Text(
+              controller.shopNameController.text.isNotEmpty 
+                  ? controller.shopNameController.text 
+                  : 'Naturals Parlour',
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1E232C),
+              ),
+            ),
+            
+            const SizedBox(height: 4),
+            
+            // Location
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _buildDetailCard(
-                  icon: Icons.person,
-                  label: 'OWNER NAME',
-                  value: controller.ownerNameController.text,
-                ),
-                const SizedBox(height: 16),
-                _buildDetailCard(
-                  icon: Icons.phone,
-                  label: 'CONTACT',
-                  value: controller.contactNumberController.text,
-                ),
-                const SizedBox(height: 16),
-                _buildDetailCard(
-                  icon: Icons.location_on,
-                  label: 'FULL ADDRESS',
-                  value: controller.fullAddressController.text,
-                  isMultiLine: true,
-                ),
+                const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                const SizedBox(width: 4),
+                Obx(() => Text(
+                  controller.selectedAddress.value.isNotEmpty
+                      ? controller.selectedAddress.value
+                      : 'Miyapur, Hyderabad', 
+                  style: const TextStyle(
+                    fontSize: 14,
+                    color: Colors.grey,
+                  ),
+                )),
               ],
             ),
-          ),
-          
-          const SizedBox(height: 40),
-        ],
+            
+            const SizedBox(height: 12),
+            
+            // Rating Pill
+            Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF9E6), // Light Yellow
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: const Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.star, color: Color(0xFFFFC107), size: 18),
+                  SizedBox(width: 6),
+                  Text(
+                    '4.2 Rating',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFFD4A017),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 30),
+            
+            // 2. Shop Information
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader('SHOP INFORMATION'),
+                  const SizedBox(height: 16),
+                  
+                  InfoRow(
+                    icon: Icons.person,
+                    iconBgColor: const Color(0xFFE3F2FD), // Light Blue
+                    title: 'Owner Name',
+                    value: controller.ownerNameController.text.isNotEmpty 
+                        ? controller.ownerNameController.text 
+                        : 'Vignesh Kumar',
+                  ),
+                  
+                  InfoRow(
+                    icon: Icons.phone,
+                    iconBgColor: const Color(0xFFE8F5E9), // Light Green
+                    title: 'Phone',
+                    value: controller.contactNumberController.text.isNotEmpty
+                        ? controller.contactNumberController.text
+                        : '6123456789',
+                  ),
+                  
+                  InfoRow(
+                    icon: Icons.home,
+                    iconBgColor: const Color(0xFFFBE9E7), // Light Orange
+                    title: 'Address',
+                    value: controller.fullAddressController.text.isNotEmpty
+                        ? controller.fullAddressController.text
+                        : 'Plot No. 42, Hitech City Main Rd, near Ratnadeep Supermarket',
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // 3. Manage Shop
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader('MANAGE SHOP'),
+                  const SizedBox(height: 16),
+                  
+                  ProfileListItem(
+                    icon: Icons.spa,
+                    iconBgColor: const Color(0xFFF3E5F5), // Light Purple
+                    iconColor: const Color(0xFF9C27B0),
+                    title: 'Manage Services',
+                    onTap: () {
+                      final dashboardController = Get.find<AdminDashboardController>();
+                      dashboardController.changeTabIndex(1); // Switch to Services Tab
+                     },
+                  ),
+                  
+                  ProfileListItem(
+                    icon: Icons.people,
+                    iconBgColor: const Color(0xFFE8EAF6), // Light Indigo
+                    iconColor: const Color(0xFF3F51B5),
+                    title: 'Manage Service Providers',
+                    onTap: () {
+                      final dashboardController = Get.find<AdminDashboardController>();
+                      dashboardController.changeTabIndex(2); // Switch to Providers Tab
+                    },
+                  ),
+                  
+                  ProfileListItem(
+                    icon: Icons.star_outline,
+                    iconBgColor: const Color(0xFFFFEBEE), // Light Red
+                    iconColor: const Color(0xFFE22424),
+                    title: 'Shop Reviews',
+                    onTap: () {
+                       Get.toNamed(AppRoutes.REVIEWS);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 20),
+            
+            // 4. General
+             Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildSectionHeader('GENERAL'),
+                  const SizedBox(height: 16),
+                  
+                  ProfileListItem(
+                    icon: Icons.settings,
+                    iconBgColor: const Color(0xFFFFF3E0), // Light Orange
+                    iconColor: const Color(0xFFFF9800),
+                    title: 'Settings',
+                    onTap: () {
+                         Get.toNamed(AppRoutes.SETTINGS);
+                    },
+                  ),
+                ],
+              ),
+            ),
+            
+            const SizedBox(height: 40),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildDetailCard({
-    required IconData icon, 
-    required String label, 
-    required String value,
-    bool isMultiLine = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: isMultiLine ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.grey[100],
-            child: Icon(icon, color: Colors.grey[600]),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value.isNotEmpty ? value : 'N/A',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E232C),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
+  Widget _buildSectionHeader(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.bold,
+        color: Colors.grey,
+        letterSpacing: 1.0,
       ),
     );
   }
 }
 
-  Widget _buildDetailCard({
-    required IconData icon, 
-    required String label, 
-    required String value,
-    bool isMultiLine = false,
-  }) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        crossAxisAlignment: isMultiLine ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-        children: [
-          CircleAvatar(
-            backgroundColor: Colors.grey[100],
-            child: Icon(icon, color: Colors.grey[600]),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    color: Colors.grey,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value.isNotEmpty ? value : 'N/A',
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w600,
-                    color: Color(0xFF1E232C),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
+
 

@@ -27,6 +27,14 @@ import 'package:salon/app/modules/admin_dashboard/bindings/admin_dashboard_bindi
 import 'package:salon/app/modules/admin_dashboard/views/admin_dashboard_view.dart';
 import 'package:salon/app/modules/service_providers/bindings/service_providers_binding.dart';
 import 'package:salon/app/modules/service_providers/views/add_service_provider_view.dart';
+import 'package:salon/app/modules/settings/bindings/settings_binding.dart';
+import 'package:salon/app/modules/settings/views/settings_view.dart';
+import 'package:salon/app/modules/settings/views/change_password_view.dart';
+import 'package:salon/app/modules/settings/views/password_updated_view.dart';
+import 'package:salon/app/modules/reviews/bindings/reviews_binding.dart';
+import 'package:salon/app/modules/reviews/views/shop_reviews_view.dart';
+import 'package:salon/app/modules/notifications/bindings/notifications_binding.dart';
+import 'package:salon/app/modules/notifications/views/notifications_view.dart';
 import 'package:salon/app/routes/app_routes.dart';
 
 class AppPages {
@@ -35,6 +43,17 @@ class AppPages {
   static const INITIAL = AppRoutes.LOGIN;
 
   static final routes = [
+    GetPage(
+      name: AppRoutes.NOTIFICATIONS,
+      page: () => const NotificationsView(),
+      binding: NotificationsBinding(),
+    ),
+    // ... existing routes
+    GetPage(
+      name: AppRoutes.REVIEWS,
+      page: () => const ShopReviewsView(),
+      binding: ReviewsBinding(),
+    ),
     // Customer Auth Routes
     GetPage(
       name: AppRoutes.LOGIN,
@@ -128,6 +147,22 @@ class AppPages {
       name: AppRoutes.ADD_SERVICE_PROVIDER,
       page: () => const AddServiceProviderView(),
       binding: ServiceProvidersBinding(),
+    ),
+    
+    // Settings Routes
+    GetPage(
+      name: AppRoutes.SETTINGS,
+      page: () => const SettingsView(),
+      binding: SettingsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.CHANGE_PASSWORD,
+      page: () => const ChangePasswordView(),
+      binding: ChangePasswordBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.PASSWORD_UPDATED,
+      page: () => const PasswordUpdatedView(),
     ),
   ];
 }

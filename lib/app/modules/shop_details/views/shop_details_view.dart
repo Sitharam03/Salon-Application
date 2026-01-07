@@ -1,6 +1,9 @@
+import 'dart:io';
+import 'package:flutter/foundation.dart'; // For kIsWeb
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salon/app/modules/shop_details/controllers/shop_details_controller.dart';
+import 'package:salon/app/modules/profile/widgets/cover_photo_carousel.dart';
 
 class ShopDetailsView extends GetView<ShopDetailsController> {
   const ShopDetailsView({super.key});
@@ -16,14 +19,14 @@ class ShopDetailsView extends GetView<ShopDetailsController> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Get.back(),
         ),
-        title: Text(
-          controller.isEditingProfile ? 'Edit Your Shop Details' : 'Shop Details',
+        title: Obx(() => Text(
+          controller.isEditingProfile.value ? 'Edit Your Shop Details' : 'Shop Details',
           style: const TextStyle(
             color: Colors.black,
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
-        ),
+        )),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -43,62 +46,97 @@ class ShopDetailsView extends GetView<ShopDetailsController> {
                           height: 200,
                           child: Stack(
                             children: [
-                              // Cover Photo Placeholder
-                              Container(
-                                height: 160,
-                                width: double.infinity,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    const Icon(Icons.camera_alt_outlined, color: Colors.white, size: 30),
-                                    const SizedBox(height: 8),
-                                    Text(
-                                      'Add Cover Photo',
-                                      style: TextStyle(color: Colors.white.withOpacity(0.8), fontSize: 12),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                              // Cover Photo Carousel
+                               Obx(() => Stack(
+                                 children: [
+                                   CoverPhotoCarousel(
+                                     images: controller.coverImages.toList(),
+                                     onAddTap: controller.pickCoverImage, // Using pickCoverImage (with limit check)
+                                   ),
+                                   
+                                   // Camera Icon Button Overlay (always visible to add more)
+                                   Positioned(
+                                     top: 16,
+                                     right: 16,
+                                     child: GestureDetector(
+                                       onTap: controller.takeCoverPhoto,
+                                       child: Container(
+                                         padding: const EdgeInsets.all(8),
+                                         decoration: BoxDecoration(
+                                           color: Colors.black.withOpacity(0.5),
+                                           shape: BoxShape.circle,
+                                         ),
+                                         child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
+                                       ),
+                                     ),
+                                   ),
+                                 ],
+                               )),
                               // Profile Photo
                               Positioned(
                                 bottom: 0,
                                 left: 0,
                                 right: 0,
                                 child: Center(
-                                  child: Stack(
-                                    children: [
-                                      Container(
-                                        width: 100,
-                                        height: 100,
-                                        decoration: BoxDecoration(
-                                          color: const Color(0xFF1B4B43), // Dark green from design
-                                          shape: BoxShape.circle,
-                                          border: Border.all(color: Colors.white, width: 4),
-                                        ),
-                                        child: const Column(
-                                          mainAxisAlignment: MainAxisAlignment.center,
-                                          children: [
-                                             Icon(Icons.spa, color: Colors.white, size: 30), // Leaf icon placeholder
-                                          ],
-                                        ),
-                                      ),
-                                      Positioned(
-                                        bottom: 0,
-                                        right: 0,
-                                        child: Container(
-                                          padding: const EdgeInsets.all(8),
-                                          decoration: const BoxDecoration(
-                                            color: Color(0xFFE22424),
+                                  child: GestureDetector(
+                                    onTap: controller.pickProfileImage,
+                                    child: Stack(
+                                      children: [
+                                        Container(
+                                          width: 100,
+                                          height: 100,
+                                          decoration: BoxDecoration(
+                                            color: const Color(0xFF1B4B43), // Dark green from design
                                             shape: BoxShape.circle,
+                                            border: Border.all(color: Colors.white, width: 4),
                                           ),
-                                          child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                                          child: Obx(() {
+                                              final image = controller.profileImage.value;
+                                              if (image != null) {
+                                                if (kIsWeb) {
+                                                   return ClipOval(
+                                                    child: Image.network(
+                                                      image.path,
+                                                      width: 100,
+                                                      height: 100,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  );
+                                                } else {
+                                                  return ClipOval(
+                                                    child: Image.file(
+                                                      File(image.path),
+                                                      width: 100,
+                                                      height: 100,
+                                                      fit: BoxFit.cover,
+                                                    ),
+                                                  );
+                                                }
+                                              }
+                                                return ClipOval(
+                                                  child: Image.asset(
+                                                    'assets/profile_avatar.png',
+                                                    width: 100,
+                                                    height: 100,
+                                                    fit: BoxFit.cover,
+                                                  ),
+                                                );
+                                          }),
                                         ),
-                                      ),
-                                    ],
+                                        Positioned(
+                                          bottom: 0,
+                                          right: 0,
+                                          child: Container(
+                                            padding: const EdgeInsets.all(8),
+                                            decoration: const BoxDecoration(
+                                              color: Color(0xFFE22424),
+                                              shape: BoxShape.circle,
+                                            ),
+                                            child: const Icon(Icons.edit, color: Colors.white, size: 16),
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
                                 ),
                               ),

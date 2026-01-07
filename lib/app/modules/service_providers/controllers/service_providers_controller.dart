@@ -11,7 +11,7 @@ class ServiceProvidersController extends GetxController {
       contact: '6123654789',
       email: 'gdurgaprasad065@gmail.com',
       address: 'Miyapur, Hyderabad',
-      imagePath: 'assets/images/human_1.png', // Placeholder
+      imagePath: 'assets/profile_avatar.png', // Placeholder
     ),
     ServiceProviderModel(
       id: '2',
@@ -19,7 +19,7 @@ class ServiceProvidersController extends GetxController {
       contact: '6123654789',
       email: 'vigneshkumar@gmail.com',
       address: 'Miyapur, Hyderabad',
-      imagePath: 'assets/images/human_2.png', // Placeholder
+      imagePath: 'assets/profile_avatar.png', // Placeholder
     ),
     ServiceProviderModel(
       id: '3',
@@ -27,7 +27,7 @@ class ServiceProvidersController extends GetxController {
       contact: '6123654789',
       email: 'anitaroy@gmail.com',
       address: 'Madhapur, Hyderabad',
-      imagePath: 'assets/images/human_3.png', // Placeholder
+      imagePath: 'assets/profile_avatar.png', // Placeholder
     ),
      ServiceProviderModel(
       id: '4',
@@ -35,7 +35,7 @@ class ServiceProvidersController extends GetxController {
       contact: '9876543210',
       email: 'raj.malhotra@salon.com',
       address: 'Gachibowli, Hyderabad',
-      imagePath: 'assets/images/human_4.png', // Placeholder
+      imagePath: 'assets/profile_avatar.png', // Placeholder
     ),
   ].obs;
 
