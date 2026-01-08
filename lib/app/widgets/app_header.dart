@@ -5,39 +5,45 @@ class AppHeader extends StatelessWidget {
   const AppHeader({super.key});
 
   @override
+  @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(20),
-      child: RichText(
-        text: const TextSpan(
-          children: [
-            TextSpan(
-              text: "India's 1st\n",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            TextSpan(
-              text: "Salon\n",
-              style: TextStyle(
-                color: AppColors.primaryAlt,
-                fontSize: 40,
-                fontWeight: FontWeight.w900,
-              ),
-            ),
-            TextSpan(
-              text: "Application",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ],
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "India's 1st",
+          style: TextStyle(
+            fontSize: 22,
+            fontWeight: FontWeight.w500,
+            color: Colors.grey,
+          ),
         ),
-      ),
+        const SizedBox(height: 8),
+        RichText(
+          text: const TextSpan(
+            children: [
+              TextSpan(
+                text: "Salon\n",
+                style: TextStyle(
+                  color: Color(0xFFE22424),
+                  fontSize: 45,
+                  fontWeight: FontWeight.bold,
+                  height: 1.1,
+                ),
+              ),
+              TextSpan(
+                text: "Application",
+                style: TextStyle(
+                  color: Color(0xFF1E232C),
+                  fontSize: 45,
+                  fontWeight: FontWeight.bold,
+                  height: 1.1,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
     );
   }
 }
