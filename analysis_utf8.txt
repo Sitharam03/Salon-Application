@@ -1,0 +1,96 @@
+Analyzing salon...                                              
+
+warning - Unused import: 'package:salon/app/core/utils/validators.dart' - lib\app\modules\Admin_Screens\admin_auth\controllers\admin_login_controller.dart:3:8 - unused_import
+   info - Unnecessary override - lib\app\modules\Admin_Screens\admin_auth\controllers\admin_login_controller.dart:20:8 - unnecessary_overrides
+warning - Unused import: 'package:salon/app/widgets/phone_input_field.dart' - lib\app\modules\Admin_Screens\admin_auth\views\admin_login_view.dart:6:8 - unused_import
+warning - Unused import: 'package:salon/app/widgets/primary_button.dart' - lib\app\modules\Admin_Screens\admin_auth\views\admin_login_view.dart:7:8 - unused_import
+warning - Unused import: 'package:salon/app/widgets/terms_checkbox.dart' - lib\app\modules\Admin_Screens\admin_auth\views\admin_login_view.dart:8:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\admin_auth\views\admin_signup_view.dart:64:42 - deprecated_member_use
+warning - Unused import: 'package:salon/app/modules/Admin_Screens/admin_auth/controllers/admin_signup_controller.dart' - lib\app\modules\Admin_Screens\admin_auth\views\success_view.dart:3:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\admin_auth\views\success_view.dart:64:58 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\admin_auth\views\success_view.dart:121:42 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\admin_auth\views\success_view.dart:136:60 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\admin_dashboard\views\admin_dashboard_view.dart:267:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\admin_dashboard\views\admin_dashboard_view.dart:329:26 - deprecated_member_use
+warning - This default clause is covered by the previous cases - lib\app\modules\Admin_Screens\notifications\controllers\notifications_controller.dart:90:7 - unreachable_switch_default
+   info - Unnecessary use of 'toList' in a spread - lib\app\modules\Admin_Screens\notifications\views\notifications_view.dart:74:62 - unnecessary_to_list_in_spreads
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\notifications\views\notifications_view.dart:92:35 - deprecated_member_use
+warning - This default clause is covered by the previous cases - lib\app\modules\Admin_Screens\notifications\views\notifications_view.dart:184:7 - unreachable_switch_default
+warning - This default clause is covered by the previous cases - lib\app\modules\Admin_Screens\notifications\views\notifications_view.dart:198:7 - unreachable_switch_default
+warning - This default clause is covered by the previous cases - lib\app\modules\Admin_Screens\notifications\views\notifications_view.dart:212:7 - unreachable_switch_default
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\orders\views\orders_view.dart:191:33 - deprecated_member_use
+warning - Unused import: 'dart:io' - lib\app\modules\Admin_Screens\orders\widgets\order_card.dart:3:8 - unused_import
+warning - The value of the local variable 'statusColor' isn't used - lib\app\modules\Admin_Screens\orders\widgets\order_card.dart:22:11 - unused_local_variable
+warning - The value of the local variable 'statusText' isn't used - lib\app\modules\Admin_Screens\orders\widgets\order_card.dart:23:12 - unused_local_variable
+warning - The value of the local variable 'statusIcon' isn't used - lib\app\modules\Admin_Screens\orders\widgets\order_card.dart:24:15 - unused_local_variable
+warning - This default clause is covered by the previous cases - lib\app\modules\Admin_Screens\orders\widgets\order_card.dart:38:7 - unreachable_switch_default
+warning - The value of the local variable 'borderColor' isn't used - lib\app\modules\Admin_Screens\orders\widgets\order_card.dart:45:11 - unused_local_variable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\orders\widgets\order_card.dart:56:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\orders\widgets\order_card.dart:314:81 - deprecated_member_use
+warning - Unused import: 'package:salon/app/modules/Admin_Screens/reviews/views/shop_reviews_view.dart' - lib\app\modules\Admin_Screens\profile\views\profile_view.dart:10:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\profile\views\profile_view.dart:73:52 - deprecated_member_use
+   info - Parameter 'key' could be a super parameter - lib\app\modules\Admin_Screens\profile\widgets\cover_photo_carousel.dart:13:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\profile\widgets\cover_photo_carousel.dart:136:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\profile\widgets\cover_photo_carousel.dart:157:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\profile\widgets\cover_photo_carousel.dart:188:71 - deprecated_member_use
+   info - Parameter 'key' could be a super parameter - lib\app\modules\Admin_Screens\profile\widgets\cover_photo_carousel.dart:206:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\reviews\views\respond_to_review_view.dart:46:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\reviews\views\response_submitted_view.dart:42:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\reviews\views\response_submitted_view.dart:48:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\reviews\views\shop_reviews_view.dart:106:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\reviews\views\shop_reviews_view.dart:195:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\service_providers\views\add_service_provider_view.dart:67:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\service_providers\views\add_service_provider_view.dart:239:37 - deprecated_member_use
+warning - Unused import: 'package:salon/app/routes/app_routes.dart' - lib\app\modules\Admin_Screens\service_providers\views\service_providers_view.dart:3:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\service_providers\views\service_providers_view.dart:34:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\service_providers\views\service_providers_view.dart:100:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\services\views\add_service_view.dart:177:35 - deprecated_member_use
+warning - Unused import: 'package:salon/app/routes/app_routes.dart' - lib\app\modules\Admin_Screens\services\views\services_view.dart:3:8 - unused_import
+warning - Unused import: 'add_service_view.dart' - lib\app\modules\Admin_Screens\services\views\services_view.dart:7:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\services\views\services_view.dart:75:37 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\services\views\services_view.dart:139:35 - deprecated_member_use
+warning - The value of the local variable 'idx' isn't used - lib\app\modules\Admin_Screens\services\views\services_view.dart:198:26 - unused_local_variable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\settings\controllers\change_password_controller.dart:27:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\settings\controllers\change_password_controller.dart:33:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\settings\controllers\change_password_controller.dart:39:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\settings\views\password_updated_view.dart:40:48 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\settings\views\password_updated_view.dart:48:52 - deprecated_member_use
+   info - 'activeColor' is deprecated and shouldn't be used. Use activeThumbColor instead. This feature was deprecated after v3.31.0-2.0.pre - lib\app\modules\Admin_Screens\settings\views\settings_view.dart:276:19 - deprecated_member_use
+   info - Parameter 'key' could be a super parameter - lib\app\modules\Admin_Screens\shop_details\views\image_confirm_view.dart:12:9 - use_super_parameters
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\Admin_Screens\shop_details\views\shop_details_view.dart:66:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\User_Screens\complete_profile\controllers\complete_profile_controller.dart:117:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\User_Screens\complete_profile\controllers\complete_profile_controller.dart:131:39 - deprecated_member_use
+warning - Unused import: 'package:salon/app/core/values/app_colors.dart' - lib\app\modules\User_Screens\complete_profile\views\complete_profile_view.dart:3:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\User_Screens\complete_profile\views\complete_profile_view.dart:65:49 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\User_Screens\user_auth\controllers\otp_controller.dart:89:39 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\User_Screens\user_auth\controllers\otp_controller.dart:126:37 - deprecated_member_use
+warning - The value of the local variable 'isSelected' isn't used - lib\app\modules\booking\views\booking_slot_view.dart:50:32 - unused_local_variable
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\booking\views\booking_slot_view.dart:68:70 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\booking\views\booking_slot_view.dart:185:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\booking\views\booking_success_view.dart:26:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\booking\views\booking_success_view.dart:60:51 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\booking\views\booking_success_view.dart:132:50 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\booking\views\salon_details_view.dart:110:51 - deprecated_member_use
+  error - Invalid constant value - lib\app\modules\booking\views\salon_details_view.dart:121:49 - invalid_constant
+  error - Undefined name 'SystemFonts' - lib\app\modules\booking\views\salon_details_view.dart:121:49 - undefined_identifier
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\booking\views\salon_details_view.dart:157:75 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\booking\views\salon_details_view.dart:305:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\home\views\home_view.dart:163:61 - deprecated_member_use
+warning - The member 'value' can only be used within instance members of subclasses of 'RxSet' - lib\app\modules\maps\controllers\location_controller.dart:51:14 - invalid_use_of_protected_member
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\maps\views\location_view.dart:42:43 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\maps\views\location_view.dart:105:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\maps\views\location_view.dart:130:64 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\modules\maps\views\location_view.dart:221:47 - deprecated_member_use
+   info - The constant name 'INITIAL' isn't a lowerCamelCase identifier - lib\app\routes\app_pages.dart:50:16 - constant_identifier_names
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\admin_bottom_nav_bar.dart:20:33 - deprecated_member_use
+warning - Unused import: 'package:salon/app/core/values/app_colors.dart' - lib\app\widgets\app_header.dart:2:8 - unused_import
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\gender_selection_tab.dart:42:41 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\salon_background_animation.dart:173:33 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\salon_card.dart:132:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\salon_carousel.dart:84:45 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\salon_carousel.dart:97:40 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\salon_carousel.dart:131:55 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\salon_carousel.dart:184:53 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\salon_carousel.dart:186:72 - deprecated_member_use
+   info - 'withOpacity' is deprecated and shouldn't be used. Use .withValues() to avoid precision loss - lib\app\widgets\user_bottom_nav_bar.dart:45:33 - deprecated_member_use
+

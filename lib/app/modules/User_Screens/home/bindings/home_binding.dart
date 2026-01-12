@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:salon/app/modules/home/controllers/home_controller.dart';
+import 'package:salon/app/modules/User_Screens/home/controllers/home_controller.dart';
 
 class HomeBinding extends Bindings {
   @override

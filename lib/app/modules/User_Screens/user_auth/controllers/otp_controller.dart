@@ -83,9 +83,15 @@ class OTPController extends GetxController {
       return;
     }
 
-    // Navigate to profile screen
+    // Show verified snackbar
+    Get.snackbar('Success', 'OTP Verified',
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.green.withOpacity(0.1),
+        colorText: Colors.green);
+
+    // Navigate to profile completion screen
     Get.offAllNamed(
-      AppRoutes.PROFILE,
+      AppRoutes.COMPLETE_PROFILE,
       arguments: {'phoneNumber': phoneNumber},
     );
   }
@@ -113,11 +119,13 @@ class OTPController extends GetxController {
 
   /// Show snackbar message
   void _showSnackBar(String message) {
-    Get.showSnackbar(
-      GetSnackBar(
-        message: message,
-        duration: const Duration(seconds: 2),
-      ),
+    Get.snackbar(
+      'Notice',
+      message,
+      snackPosition: SnackPosition.BOTTOM,
+      backgroundColor: Colors.black.withOpacity(0.1),
+      colorText: Colors.black,
+      duration: const Duration(seconds: 2),
     );
   }
 }

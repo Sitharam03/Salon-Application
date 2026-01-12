@@ -7,7 +7,7 @@ plugins {
 
 android {
     namespace = "com.example.salon"
-    compileSdk = 35
+    compileSdk = 36
     ndkVersion = "27.3.13750724"
 
     compileOptions {

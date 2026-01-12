@@ -15,8 +15,10 @@ import 'package:salon/app/modules/Admin_Screens/admin_auth/views/success_view.da
 import 'package:salon/app/modules/User_Screens/user_auth/bindings/auth_binding.dart';
 import 'package:salon/app/modules/User_Screens/user_auth/views/login_view.dart';
 import 'package:salon/app/modules/User_Screens/user_auth/views/otp_view.dart';
-import 'package:salon/app/modules/home/bindings/home_binding.dart';
-import 'package:salon/app/modules/home/views/home_view.dart';
+import 'package:salon/app/modules/User_Screens/home/bindings/home_binding.dart';
+import 'package:salon/app/modules/User_Screens/complete_profile/bindings/complete_profile_binding.dart';
+import 'package:salon/app/modules/User_Screens/complete_profile/views/complete_profile_view.dart';
+import 'package:salon/app/modules/User_Screens/home/views/home_view.dart';
 import 'package:salon/app/modules/maps/bindings/maps_binding.dart';
 import 'package:salon/app/modules/maps/views/location_view.dart';
 import 'package:salon/app/modules/Admin_Screens/profile/bindings/profile_binding.dart';
@@ -35,12 +37,24 @@ import 'package:salon/app/modules/Admin_Screens/reviews/bindings/reviews_binding
 import 'package:salon/app/modules/Admin_Screens/reviews/views/shop_reviews_view.dart';
 import 'package:salon/app/modules/Admin_Screens/notifications/bindings/notifications_binding.dart';
 import 'package:salon/app/modules/Admin_Screens/notifications/views/notifications_view.dart';
+import 'package:salon/app/modules/User_Screens/my_bookings/bindings/my_bookings_binding.dart';
+import 'package:salon/app/modules/User_Screens/my_bookings/views/my_bookings_view.dart';
+import 'package:salon/app/modules/User_Screens/booking_details/bindings/booking_details_binding.dart';
+import 'package:salon/app/modules/User_Screens/booking_details/views/booking_details_view.dart';
+import 'package:salon/app/modules/User_Screens/feedback/bindings/feedback_binding.dart';
+import 'package:salon/app/modules/User_Screens/feedback/views/feedback_view.dart';
+import 'package:salon/app/modules/User_Screens/feedback/views/feedback_success_view.dart';
+
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/modules/User_Screens/booking/bindings/booking_binding.dart';
+import 'package:salon/app/modules/User_Screens/booking/views/salon_details_view.dart';
+import 'package:salon/app/modules/User_Screens/booking/views/booking_slot_view.dart';
+import 'package:salon/app/modules/User_Screens/booking/views/booking_success_view.dart';
 
 class AppPages {
   AppPages._();
 
-  static const INITIAL = AppRoutes.LOGIN;
+  static const INITIAL = AppRoutes.HOME;
 
   static final routes = [
     GetPage(
@@ -64,6 +78,26 @@ class AppPages {
       name: AppRoutes.OTP,
       page: () => const OTPView(),
       binding: AuthBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.COMPLETE_PROFILE,
+      page: () => const CompleteProfileView(),
+      binding: CompleteProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.SALON_DETAILS,
+      page: () => const SalonDetailsView(),
+      binding: BookingBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.BOOKING_SLOT,
+      page: () => const BookingSlotView(),
+      binding: BookingBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.BOOKING_SUCCESS,
+      page: () => const BookingSuccessView(),
+      binding: BookingBinding(),
     ),
 
     // Admin Routes
@@ -163,6 +197,25 @@ class AppPages {
     GetPage(
       name: AppRoutes.PASSWORD_UPDATED,
       page: () => const PasswordUpdatedView(),
+    ),
+    GetPage(
+      name: AppRoutes.MY_BOOKINGS,
+      page: () => const MyBookingsView(),
+      binding: MyBookingsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.BOOKING_DETAILS,
+      page: () => const BookingDetailsView(),
+      binding: BookingDetailsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.FEEDBACK,
+      page: () => const FeedbackView(),
+      binding: FeedbackBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.FEEDBACK_SUCCESS,
+      page: () => const FeedbackSuccessView(),
     ),
   ];
 }

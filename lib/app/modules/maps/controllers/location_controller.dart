@@ -208,11 +208,29 @@ class LocationController extends GetxController {
   }
 
   void confirmLocation() {
-    Get.toNamed(AppRoutes.SHOP_DETAILS, arguments: {
-      'address': _selectedAddress.value,
-      'latitude': _currentPosition.value.latitude,
-      'longitude': _currentPosition.value.longitude,
-    });
+    // Get destination from arguments or default to SHOP_DETAILS
+    final args = Get.arguments as Map<String, dynamic>?;
+    final destination = args?['destination'] ?? AppRoutes.SHOP_DETAILS;
+
+    // Remove destination from args if present to avoid looping or pollution if needed, 
+    // but here we just need to pass back the location data.
+    
+    // If destination is HOME, we might want to clear stack or just navigate
+    if (destination == AppRoutes.HOME) {
+      Get.offAllNamed(destination, arguments: {
+        'address': _selectedAddress.value,
+        'city': _selectedCity.value,
+        'latitude': _currentPosition.value.latitude,
+        'longitude': _currentPosition.value.longitude,
+      });
+    } else {
+       Get.toNamed(destination, arguments: {
+        'address': _selectedAddress.value,
+        'city': _selectedCity.value,
+        'latitude': _currentPosition.value.latitude,
+        'longitude': _currentPosition.value.longitude,
+      });
+    }
   }
 
   void _showSnackBar(String message) {

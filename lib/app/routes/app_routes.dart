@@ -11,6 +11,14 @@ class AppRoutes {
   static const String OTP = '/otp';
   static const String HOME = '/home';
   static const String PROFILE = '/profile';
+  static const String COMPLETE_PROFILE = '/complete-profile';
+  static const String MY_BOOKINGS = '/my-bookings';
+  static const String BOOKING_DETAILS = '/booking-details';
+  static const String FEEDBACK = '/feedback';
+  static const String FEEDBACK_SUCCESS = '/feedback-success';
+  static const SALON_DETAILS = '/salon-details';
+  static const BOOKING_SLOT = '/booking-slot';
+  static const BOOKING_SUCCESS = '/booking-success';
 
   // Admin Routes
   static const String ADMIN_LOGIN = '/admin/login';
