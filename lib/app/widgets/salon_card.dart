@@ -7,6 +7,8 @@ class SalonCard extends StatelessWidget {
   final double rating;
   final String distance;
   final VoidCallback? onTap;
+  final bool isFavorite;
+  final VoidCallback? onFavoriteTap;
 
   const SalonCard({
     super.key,
@@ -16,6 +18,8 @@ class SalonCard extends StatelessWidget {
     required this.rating,
     required this.distance,
     this.onTap,
+    this.isFavorite = false,
+    this.onFavoriteTap,
   });
 
   @override
@@ -115,8 +119,11 @@ class SalonCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 IconButton(
-                  onPressed: () {}, 
-                  icon: const Icon(Icons.favorite_border), // Outline only as requested
+                  onPressed: onFavoriteTap, 
+                  icon: Icon(
+                    isFavorite ? Icons.favorite : Icons.favorite_border,
+                    color: isFavorite ? const Color(0xFFE31E51) : Colors.grey[600],
+                  ),
                   color: Colors.grey[600],
                   padding: EdgeInsets.zero,
                   constraints: const BoxConstraints(),

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/modules/User_Screens/user_auth/controllers/user_profile_controller.dart';
 
 class CompleteProfileController extends GetxController {
   // Arguments
@@ -16,6 +17,7 @@ class CompleteProfileController extends GetxController {
   // Observable state
   final Rx<File?> profileImage = Rx<File?>(null);
   final RxBool isLoading = false.obs;
+  final RxBool isEditMode = false.obs; // To track if we are editing
 
   final ImagePicker _picker = ImagePicker();
 
@@ -23,8 +25,21 @@ class CompleteProfileController extends GetxController {
   void onInit() {
     super.onInit();
     // Get phone number from arguments or route params
-    phoneNumber = Get.arguments?['phoneNumber'] ?? '';
-    phoneInputController.text = phoneNumber;
+    final args = Get.arguments;
+    if (args != null && args is Map) {
+      if (args.containsKey('isEditMode') && args['isEditMode'] == true) {
+         isEditMode.value = true;
+         // Pre-fill data
+         nameController.text = args['name'] ?? '';
+         emailController.text = args['email'] ?? '';
+         phoneNumber = args['phone'] ?? '';
+         phoneInputController.text = phoneNumber;
+         // Handle image if passed (url or file path logic would be needed for real app)
+      } else {
+        phoneNumber = args['phoneNumber'] ?? '';
+        phoneInputController.text = phoneNumber;
+      }
+    }
   }
 
   @override
@@ -126,15 +141,28 @@ class CompleteProfileController extends GetxController {
     
     isLoading.value = false;
     
-    Get.snackbar('Success', 'Profile updated successfully!',
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.green.withOpacity(0.1),
-        colorText: Colors.green);
+    // Get.snackbar removed - will show in previous screen
+    // Get.snackbar('Success', 'Profile updated successfully!',
+    //     snackPosition: SnackPosition.BOTTOM,
+    //     backgroundColor: Colors.green.withOpacity(0.1),
+    //     colorText: Colors.green);
         
-    // Navigate to Location Selection
-    Get.offAllNamed(
-      AppRoutes.MAPS,
-      arguments: {'destination': AppRoutes.HOME},
-    ); 
+    // If Edit Mode, go back. If Create Mode, go to Maps
+    if (isEditMode.value) {
+      // Directly update UserProfileController if available to ensure changes are reflected
+      if (Get.isRegistered<UserProfileController>()) {
+        final userProfileController = Get.find<UserProfileController>();
+        userProfileController.name.value = nameController.text;
+        userProfileController.email.value = emailController.text;
+        // userProfileController.phone.value = phoneInputController.text; // Phone is read-only usually
+      }
+      
+      Get.back(result: true); // Navigate back to Profile with success flag
+    } else {
+      Get.offAllNamed(
+        AppRoutes.MAPS,
+        arguments: {'destination': AppRoutes.HOME},
+      ); 
+    }
   }
 }

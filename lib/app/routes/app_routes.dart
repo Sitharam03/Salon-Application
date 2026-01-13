@@ -19,6 +19,10 @@ class AppRoutes {
   static const SALON_DETAILS = '/salon-details';
   static const BOOKING_SLOT = '/booking-slot';
   static const BOOKING_SUCCESS = '/booking-success';
+  static const FAVORITES = '/favorites';
+  static const USER_PROFILE = '/user-profile';
+  static const USER_SETTINGS = '/user-settings';
+  static const DELETE_ACCOUNT_SUCCESS = '/delete-account-success';
 
   // Admin Routes
   static const String ADMIN_LOGIN = '/admin/login';

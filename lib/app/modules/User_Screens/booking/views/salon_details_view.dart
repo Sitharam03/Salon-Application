@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salon/app/modules/User_Screens/booking/controllers/booking_controller.dart';
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/modules/User_Screens/favorites/controllers/favorites_controller.dart';
 
 class SalonDetailsView extends GetView<BookingController> {
   const SalonDetailsView({super.key});
@@ -52,17 +53,24 @@ class SalonDetailsView extends GetView<BookingController> {
                 onPressed: () {},
               ),
               const SizedBox(width: 8),
-              IconButton(
-                icon: Container(
-                  padding: const EdgeInsets.all(8),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    shape: BoxShape.circle,
+              Obx(() {
+                 final favController = Get.find<FavoritesController>();
+                 final isFav = favController.isFavorite(controller.salonData['name']); // Or ID
+                 return IconButton(
+                  icon: Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      isFav ? Icons.favorite : Icons.favorite_border,
+                      color: isFav ? const Color(0xFFE31E51) : Colors.black,
+                    ),
                   ),
-                  child: const Icon(Icons.favorite_border, color: Colors.black),
-                ),
-                onPressed: () {},
-              ),
+                  onPressed: () => favController.toggleFavorite(controller.salonData),
+                );
+              }),
               const SizedBox(width: 16),
             ],
             flexibleSpace: FlexibleSpaceBar(

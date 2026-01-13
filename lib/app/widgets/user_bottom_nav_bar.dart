@@ -26,12 +26,14 @@ class UserBottomNavBar extends StatelessWidget {
         }
         break;
       case 2:
-        // Navigate to Favorites (Placeholder)
-        // Get.toNamed(AppRoutes.FAVORITES);
+        if (Get.currentRoute != AppRoutes.FAVORITES) {
+             Get.offAllNamed(AppRoutes.FAVORITES);
+        }
         break;
       case 3:
-        // Navigate to Profile (Placeholder or reuse ProfileView)
-        // Get.toNamed(AppRoutes.PROFILE_SETTINGS);
+        if (Get.currentRoute != AppRoutes.USER_PROFILE) {
+             Get.offAllNamed(AppRoutes.USER_PROFILE);
+        }
         break;
     }
   }

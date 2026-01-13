@@ -44,6 +44,13 @@ import 'package:salon/app/modules/User_Screens/booking_details/views/booking_det
 import 'package:salon/app/modules/User_Screens/feedback/bindings/feedback_binding.dart';
 import 'package:salon/app/modules/User_Screens/feedback/views/feedback_view.dart';
 import 'package:salon/app/modules/User_Screens/feedback/views/feedback_success_view.dart';
+import 'package:salon/app/modules/User_Screens/favorites/bindings/favorites_binding.dart';
+import 'package:salon/app/modules/User_Screens/favorites/views/favorites_view.dart';
+import 'package:salon/app/modules/User_Screens/user_auth/bindings/user_profile_binding.dart';
+import 'package:salon/app/modules/User_Screens/user_auth/views/user_profile_view.dart';
+import 'package:salon/app/modules/User_Screens/user_settings/bindings/user_settings_binding.dart';
+import 'package:salon/app/modules/User_Screens/user_settings/views/user_settings_view.dart';
+import 'package:salon/app/modules/User_Screens/user_settings/views/delete_account_success_view.dart';
 
 import 'package:salon/app/routes/app_routes.dart';
 import 'package:salon/app/modules/User_Screens/booking/bindings/booking_binding.dart';
@@ -62,7 +69,6 @@ class AppPages {
       page: () => const NotificationsView(),
       binding: NotificationsBinding(),
     ),
-    // ... existing routes
     GetPage(
       name: AppRoutes.REVIEWS,
       page: () => const ShopReviewsView(),
@@ -98,6 +104,25 @@ class AppPages {
       name: AppRoutes.BOOKING_SUCCESS,
       page: () => const BookingSuccessView(),
       binding: BookingBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.FAVORITES,
+      page: () => const FavoritesView(),
+      binding: FavoritesBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.USER_PROFILE,
+      page: () => const UserProfileView(),
+      binding: UserProfileBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.USER_SETTINGS,
+      page: () => const UserSettingsView(),
+      binding: UserSettingsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.DELETE_ACCOUNT_SUCCESS,
+      page: () => const DeleteAccountSuccessView(),
     ),
 
     // Admin Routes
@@ -144,7 +169,7 @@ class AppPages {
       binding: HomeBinding(),
     ),
 
-    // Profile Route
+    // Profile Route (Admin)
     GetPage(
       name: AppRoutes.PROFILE,
       page: () => const ProfileView(),

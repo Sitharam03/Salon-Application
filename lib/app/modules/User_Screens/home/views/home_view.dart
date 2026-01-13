@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salon/app/modules/User_Screens/home/controllers/home_controller.dart';
+import 'package:salon/app/modules/User_Screens/favorites/controllers/favorites_controller.dart';
 import 'package:salon/app/widgets/salon_card.dart';
 import 'package:salon/app/widgets/user_bottom_nav_bar.dart';
 import 'package:salon/app/widgets/salon_carousel.dart';
@@ -9,6 +10,8 @@ import 'package:salon/app/routes/app_routes.dart';
 
 class HomeView extends GetView<HomeController> {
   const HomeView({super.key});
+  
+  FavoritesController get favController => Get.find<FavoritesController>();
 
   @override
   Widget build(BuildContext context) {
@@ -211,16 +214,21 @@ class HomeView extends GetView<HomeController> {
                          child: Column(
                             children: List.generate(controller.nearbySalons.length, (index) {
                               final salon = controller.nearbySalons[index];
-                              return SalonCard(
-                                imageUrl: salon['imageUrl'],
-                                name: salon['name'],
-                                location: salon['location'],
-                                rating: salon['rating'],
-                                distance: salon['distanceText'] ?? 'N/A',
-                                onTap: () {
-                                    Get.toNamed(AppRoutes.SALON_DETAILS, arguments: salon);
-                                },
-                              );
+                              return Obx(() {
+                                final isFav = favController.isFavorite(salon['name']); // Use name or ID logic relative to controller
+                                return SalonCard(
+                                  imageUrl: salon['imageUrl'],
+                                  name: salon['name'],
+                                  location: salon['location'],
+                                  rating: salon['rating'],
+                                  distance: salon['distanceText'] ?? 'N/A',
+                                  isFavorite: isFav,
+                                  onFavoriteTap: () => favController.toggleFavorite(salon),
+                                  onTap: () {
+                                      Get.toNamed(AppRoutes.SALON_DETAILS, arguments: salon);
+                                  },
+                                );
+                              });
                             }),
                          ),
                        );

@@ -37,15 +37,15 @@ class CompleteProfileView extends GetView<CompleteProfileController> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 20),
-              const Center(
-                child: Text(
-                  'Complete your Profile',
-                  style: TextStyle(
+              Center(
+                child: Obx(() => Text(
+                  controller.isEditMode.value ? 'Edit Your Profile' : 'Complete your Profile',
+                  style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
                     color: Color(0xFF1F2937), // Dark grey
                   ),
-                ),
+                )),
               ),
               const SizedBox(height: 40),
               
@@ -178,10 +178,10 @@ class CompleteProfileView extends GetView<CompleteProfileController> {
                   Expanded(
                     child: TextField(
                       controller: controller.phoneInputController,
-                      readOnly: true,
+                      readOnly: true, // Always read only as per requirement
                       decoration: InputDecoration(
                         filled: true,
-                        fillColor: const Color(0xFFF3F4F6),
+                        fillColor: const Color(0xFFE5E7EB), // Greyed out to indicate disabled/read-only more clearly
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
                           borderSide: BorderSide.none,
@@ -226,7 +226,7 @@ class CompleteProfileView extends GetView<CompleteProfileController> {
 
               // Save Button
               Obx(() => PrimaryButton(
-                    text: 'Save Profile',
+                    text: controller.isEditMode.value ? 'Update Profile' : 'Save Profile',
                     onPressed: controller.isLoading.value 
                         ? () {} 
                         : controller.saveProfile,
