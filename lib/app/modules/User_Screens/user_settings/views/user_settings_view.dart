@@ -138,7 +138,7 @@ class UserSettingsView extends GetView<UserSettingsController> {
           ),
         ),
       ),
-      bottomNavigationBar: const UserBottomNavBar(currentIndex: 3), // Keep profile tab active
+
     );
   }
 

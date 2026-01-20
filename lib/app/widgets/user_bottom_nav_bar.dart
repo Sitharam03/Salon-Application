@@ -1,45 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/modules/User_Screens/dashboard/controllers/user_dashboard_controller.dart';
 
 class UserBottomNavBar extends StatelessWidget {
-  final int currentIndex;
-
-  const UserBottomNavBar({
-    super.key,
-    required this.currentIndex,
-  });
-
-  void _onItemTapped(int index) {
-    if (index == currentIndex) return;
-
-    switch (index) {
-      case 0:
-        if (Get.currentRoute != AppRoutes.HOME) {
-            // Check if Home is already in stack or just go there
-            Get.offAllNamed(AppRoutes.HOME);
-        }
-        break;
-      case 1:
-        if (Get.currentRoute != AppRoutes.MY_BOOKINGS) {
-            Get.offAllNamed(AppRoutes.MY_BOOKINGS);
-        }
-        break;
-      case 2:
-        if (Get.currentRoute != AppRoutes.FAVORITES) {
-             Get.offAllNamed(AppRoutes.FAVORITES);
-        }
-        break;
-      case 3:
-        if (Get.currentRoute != AppRoutes.USER_PROFILE) {
-             Get.offAllNamed(AppRoutes.USER_PROFILE);
-        }
-        break;
-    }
-  }
+  const UserBottomNavBar({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<UserDashboardController>();
+    
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -51,9 +20,9 @@ class UserBottomNavBar extends StatelessWidget {
           ),
         ],
       ),
-      child: BottomNavigationBar(
-        currentIndex: currentIndex,
-        onTap: _onItemTapped,
+      child: Obx(() => BottomNavigationBar(
+        currentIndex: controller.tabIndex.value,
+        onTap: controller.changeTabIndex,
         type: BottomNavigationBarType.fixed,
         backgroundColor: Colors.white,
         selectedItemColor: const Color(0xFFE31E51), // Red
@@ -79,7 +48,7 @@ class UserBottomNavBar extends StatelessWidget {
             label: 'Profile',
           ),
         ],
-      ),
+      )),
     );
   }
 }

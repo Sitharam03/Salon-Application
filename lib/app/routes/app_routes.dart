@@ -5,6 +5,7 @@ class AppRoutes {
   AppRoutes._();
 
   static const NOTIFICATIONS = '/notifications';
+  static const USER_NOTIFICATIONS = '/user-notifications';
 
   // Customer Routes
   static const String LOGIN = '/login';

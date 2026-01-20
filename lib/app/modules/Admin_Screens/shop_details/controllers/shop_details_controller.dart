@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:salon/app/routes/app_routes.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salon/app/modules/Admin_Screens/shop_details/views/image_confirm_view.dart';
+import 'package:salon/app/services/mock_data_service.dart';
 
 class ShopDetailsController extends GetxController {
   
@@ -202,6 +203,24 @@ class ShopDetailsController extends GetxController {
     // Mock API call
     Future.delayed(const Duration(seconds: 2), () {
       isLoading.value = false;
+      
+      // Save to Global Mock Data
+      final newSalon = {
+        'name': shopNameController.text,
+        'location': selectedAddress.value,
+        'rating': 0.0, // New shop
+        'imageUrl': 'https://images.unsplash.com/photo-1521590832169-d7fcbe2af40f?auto=format&fit=crop&w=800&q=80', // Default or from picked image
+        'lat': latitude ?? 17.4401, // Default if not selected
+        'lng': longitude ?? 78.3489,
+        'distance': 0.0,
+        'categories': ['Haircut'], // Default categories for flow
+      };
+      
+      try {
+         Get.find<MockDataService>().addSalon(newSalon);
+      } catch (e) {
+         print("Error saving to mock service: $e");
+      }
       
       if (isEditingProfile.value) {
         Get.back(); // Return to Profile View

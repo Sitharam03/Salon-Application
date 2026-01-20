@@ -18,6 +18,8 @@ import 'package:salon/app/modules/User_Screens/user_auth/views/otp_view.dart';
 import 'package:salon/app/modules/User_Screens/home/bindings/home_binding.dart';
 import 'package:salon/app/modules/User_Screens/complete_profile/bindings/complete_profile_binding.dart';
 import 'package:salon/app/modules/User_Screens/complete_profile/views/complete_profile_view.dart';
+import 'package:salon/app/modules/User_Screens/dashboard/bindings/user_dashboard_binding.dart';
+import 'package:salon/app/modules/User_Screens/dashboard/views/user_dashboard_view.dart';
 import 'package:salon/app/modules/User_Screens/home/views/home_view.dart';
 import 'package:salon/app/modules/maps/bindings/maps_binding.dart';
 import 'package:salon/app/modules/maps/views/location_view.dart';
@@ -38,6 +40,8 @@ import 'package:salon/app/modules/Admin_Screens/reviews/views/shop_reviews_view.
 import 'package:salon/app/modules/Admin_Screens/notifications/bindings/notifications_binding.dart';
 import 'package:salon/app/modules/Admin_Screens/notifications/views/notifications_view.dart';
 import 'package:salon/app/modules/User_Screens/my_bookings/bindings/my_bookings_binding.dart';
+import 'package:salon/app/modules/User_Screens/notifications/bindings/user_notifications_binding.dart';
+import 'package:salon/app/modules/User_Screens/notifications/views/user_notifications_view.dart';
 import 'package:salon/app/modules/User_Screens/my_bookings/views/my_bookings_view.dart';
 import 'package:salon/app/modules/User_Screens/booking_details/bindings/booking_details_binding.dart';
 import 'package:salon/app/modules/User_Screens/booking_details/views/booking_details_view.dart';
@@ -46,8 +50,8 @@ import 'package:salon/app/modules/User_Screens/feedback/views/feedback_view.dart
 import 'package:salon/app/modules/User_Screens/feedback/views/feedback_success_view.dart';
 import 'package:salon/app/modules/User_Screens/favorites/bindings/favorites_binding.dart';
 import 'package:salon/app/modules/User_Screens/favorites/views/favorites_view.dart';
-import 'package:salon/app/modules/User_Screens/user_auth/bindings/user_profile_binding.dart';
-import 'package:salon/app/modules/User_Screens/user_auth/views/user_profile_view.dart';
+import 'package:salon/app/modules/User_Screens/profile/bindings/user_profile_binding.dart';
+import 'package:salon/app/modules/User_Screens/profile/views/user_profile_view.dart';
 import 'package:salon/app/modules/User_Screens/user_settings/bindings/user_settings_binding.dart';
 import 'package:salon/app/modules/User_Screens/user_settings/views/user_settings_view.dart';
 import 'package:salon/app/modules/User_Screens/user_settings/views/delete_account_success_view.dart';
@@ -68,6 +72,11 @@ class AppPages {
       name: AppRoutes.NOTIFICATIONS,
       page: () => const NotificationsView(),
       binding: NotificationsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.USER_NOTIFICATIONS,
+      page: () => const UserNotificationsView(),
+      binding: UserNotificationsBinding(),
     ),
     GetPage(
       name: AppRoutes.REVIEWS,
@@ -165,8 +174,8 @@ class AppPages {
     // Home Route
     GetPage(
       name: AppRoutes.HOME,
-      page: () => const HomeView(),
-      binding: HomeBinding(),
+      page: () => const UserDashboardView(),
+      binding: UserDashboardBinding(),
     ),
 
     // Profile Route (Admin)

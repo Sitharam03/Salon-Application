@@ -1,72 +1,37 @@
 import 'package:get/get.dart';
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/services/mock_data_service.dart';
+import 'package:salon/app/data/models/order_model.dart';
 
 class MyBookingsController extends GetxController {
   // Mock Data mimicking the provided image
-  final bookings = <Map<String, dynamic>>[
-    {
-      'id': '1',
-      'salonName': 'Naturals Parlour',
+  // Data Service
+  MockDataService get dataService => Get.find<MockDataService>();
+
+  // Mock Data mimicking the provided image (Proxied from Shared Data)
+  List<Map<String, dynamic>> get bookings {
+    return dataService.bookings.map((order) => {
+      'id': order.id,
+      'salonName': 'Naturals Parlour', // Mock Name as OrderModel doesn't have salon name yet
       'location': 'Miyapur, Hyderabad',
       'rating': 4.2,
-      'date': 'OCT 10',
-      'time': '1:00 PM',
+      'date': order.date.toString().split(' ')[0], // Simple date
+      'time': order.time,
       'imageUrl': 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80',
-      'status': 'Requested',
-      'phone': '+91 98765 43210',
+      'status': _mapStatus(order.status),
+      'phone': order.customerPhone,
       'email': 'contact@naturalsparlour.com',
-      'services': [
-         {'name': 'Haircut', 'price': 15.0},
-      ]
-    },
-    {
-      'id': '2',
-      'salonName': 'Naturals Parlour',
-      'location': 'Miyapur, Hyderabad',
-      'rating': 4.2,
-      'date': 'OCT 10',
-      'time': '1:00 PM',
-      'imageUrl': 'https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?auto=format&fit=crop&w=800&q=80',
-      'status': 'Accepted',
-      'phone': '+91 98765 43210',
-      'email': 'contact@naturalsparlour.com',
-      'services': [
-         {'name': 'Haircut', 'price': 15.0},
-         {'name': 'Beard Trim', 'price': 8.0},
-      ]
-    },
-    {
-      'id': '3',
-      'salonName': 'Naturals Parlour',
-      'location': 'Miyapur, Hyderabad',
-      'rating': 4.2,
-      'date': 'OCT 10',
-      'time': '1:00 PM',
-      'imageUrl': 'https://images.unsplash.com/photo-1562322140-8baeececf3df?auto=format&fit=crop&w=800&q=80',
-      'status': 'Rejected',
-      'phone': '+91 98765 43210',
-      'email': 'contact@naturalsparlour.com',
-      'services': [
-         {'name': 'Haircut', 'price': 15.0},
-      ]
-    },
-    {
-      'id': '4',
-      'salonName': 'Naturals Parlour',
-      'location': 'Miyapur, Hyderabad',
-      'rating': 4.5,
-      'date': 'SEP 28',
-      'time': '4:00 PM',
-      'imageUrl': 'https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=800&q=80',
-      'status': 'Completed',
-      'phone': '+91 98765 43210',
-      'email': 'contact@naturalsparlour.com',
-      'services': [
-         {'name': 'Facial', 'price': 30.0},
-         {'name': 'Hair Spa', 'price': 40.0},
-      ]
-    },
-  ].obs;
+      'services': order.services.map((s) => {'name': s, 'price': 0.0}).toList(), // Mock price
+    }).toList();
+  }
+
+  String _mapStatus(OrderStatus status) {
+    switch (status) {
+      case OrderStatus.pending: return 'Requested';
+      case OrderStatus.accepted: return 'Accepted';
+      case OrderStatus.rejected: return 'Rejected';
+    }
+  }
 
   Map<String, dynamic>? _getBookingById(String id) {
     return bookings.firstWhereOrNull((element) => element['id'] == id);
@@ -109,5 +74,32 @@ class MyBookingsController extends GetxController {
     if (booking != null) {
       Get.toNamed(AppRoutes.FEEDBACK, arguments: booking);
     }
+  }
+
+  // Search State
+  final isSearchActive = false.obs;
+  final searchQuery = ''.obs;
+
+  List<Map<String, dynamic>> get filteredBookings {
+    if (searchQuery.isEmpty) {
+      return bookings;
+    }
+    return bookings.where((booking) {
+      final nameMatches = booking['salonName'].toString().toLowerCase().contains(searchQuery.value.toLowerCase());
+      final serviceMatches = (booking['services'] as List).any((service) => 
+          service['name'].toString().toLowerCase().contains(searchQuery.value.toLowerCase()));
+      return nameMatches || serviceMatches;
+    }).toList();
+  }
+
+  void toggleSearch() {
+    isSearchActive.value = !isSearchActive.value;
+    if (!isSearchActive.value) {
+      searchQuery.value = '';
+    }
+  }
+
+  void onSearchChanged(String query) {
+    searchQuery.value = query;
   }
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/services/auth_service.dart';
 
 class OTPController extends GetxController {
   // Phone number from arguments
@@ -90,6 +91,14 @@ class OTPController extends GetxController {
         colorText: Colors.green);
 
     // Navigate to profile completion screen
+    // For persistency flow customization, we usually go to Home if profile is done, 
+    // but assuming flow is OTP -> Complete Profile -> Home.
+    // We will set login state here or in Complete Profile. 
+    // Let's set it here assuming "logged in", but maybe 'complete profile' is just a step.
+    // Per request "once login ... should not ask for login again".
+    
+    Get.find<AuthService>().login('user');
+    
     Get.offAllNamed(
       AppRoutes.COMPLETE_PROFILE,
       arguments: {'phoneNumber': phoneNumber},

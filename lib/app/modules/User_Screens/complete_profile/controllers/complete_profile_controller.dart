@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salon/app/routes/app_routes.dart';
-import 'package:salon/app/modules/User_Screens/user_auth/controllers/user_profile_controller.dart';
+import 'package:salon/app/modules/User_Screens/profile/controllers/user_profile_controller.dart';
 
 class CompleteProfileController extends GetxController {
   // Arguments

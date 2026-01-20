@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/services/auth_service.dart';
 
 class UserProfileController extends GetxController {
   final name = 'Vignesh Kumar'.obs;
@@ -112,6 +113,74 @@ class UserProfileController extends GetxController {
   }
 
   void signOut() {
-    Get.offAllNamed('/login'); // Hardcoded path or AppRoutes.LOGIN
+    Get.find<AuthService>().logout();
+  }
+
+  // Search State
+  final isSearchActive = false.obs;
+  final searchQuery = ''.obs;
+
+  // Define Menu Items
+  final menuItems = <Map<String, dynamic>>[
+    {
+      'title': 'Edit Profile',
+      'icon': Icons.person_outline,
+      'iconColor': const Color(0xFF3B82F6),
+      'iconBg': const Color(0xFFEFF6FF),
+      'action': 'editProfile',
+      'section': 'ACCOUNT'
+    },
+    {
+      'title': 'My Bookings',
+      'icon': Icons.calendar_today_outlined,
+      'iconColor': const Color(0xFF8B5CF6),
+      'iconBg': const Color(0xFFF3E8FF),
+      'action': 'myBookings',
+      'section': 'ACCOUNT'
+    },
+    {
+      'title': 'Favourites',
+      'icon': Icons.favorite_border,
+      'iconColor': const Color(0xFFE31E51),
+      'iconBg': const Color(0xFFFFF1F2),
+      'action': 'favorites',
+      'section': 'ACCOUNT'
+    },
+    {
+      'title': 'Settings',
+      'icon': Icons.settings_outlined,
+      'iconColor': const Color(0xFFF59E0B),
+      'iconBg': const Color(0xFFFFFBEB),
+      'action': 'settings',
+      'section': 'GENERAL'
+    },
+    {
+      'title': 'Sign Out',
+      'icon': Icons.logout,
+      'iconColor': const Color(0xFF374151),
+      'iconBg': const Color(0xFFF3F4F6),
+      'action': 'signOut',
+      'section': 'GENERAL'
+    },
+  ];
+
+  List<Map<String, dynamic>> get filteredMenuItems {
+    if (searchQuery.isEmpty) {
+      return menuItems;
+    }
+    return menuItems.where((item) {
+      return item['title'].toString().toLowerCase().contains(searchQuery.value.toLowerCase());
+    }).toList();
+  }
+
+  void toggleSearch() {
+    isSearchActive.value = !isSearchActive.value;
+    if (!isSearchActive.value) {
+      searchQuery.value = '';
+    }
+  }
+
+  void onSearchChanged(String query) {
+    searchQuery.value = query;
   }
 }

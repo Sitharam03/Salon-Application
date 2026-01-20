@@ -4,6 +4,8 @@ import 'package:salon/app/modules/User_Screens/favorites/controllers/favorites_c
 import 'package:salon/app/modules/User_Screens/favorites/widgets/favorite_salon_card.dart';
 import 'package:salon/app/routes/app_routes.dart';
 import 'package:salon/app/widgets/user_bottom_nav_bar.dart';
+import 'package:salon/app/widgets/notification_badge_icon.dart';
+import 'package:salon/app/widgets/remove_favorite_dialog.dart';
 
 class FavoritesView extends GetView<FavoritesController> {
   const FavoritesView({super.key});
@@ -13,46 +15,56 @@ class FavoritesView extends GetView<FavoritesController> {
     return Scaffold(
       backgroundColor: Colors.white, // Match clean white background
       appBar: AppBar(
-        title: const Text(
-          'Favourites',
-          style: TextStyle(
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-            color: Color(0xFF1F2937),
-          ),
+        title: Obx(() => controller.isSearchActive.value 
+          ? TextField(
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: 'Search favorites...',
+                border: InputBorder.none,
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
+              style: const TextStyle(color: Colors.black),
+              onChanged: controller.onSearchChanged,
+            )
+          : const Text(
+              'Favourites',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xFF1F2937),
+              ),
+            )
         ),
         backgroundColor: Colors.white,
         elevation: 0,
-        centerTitle: false, // Title on left as per image? Android default is left. Image shows it on left.
+        centerTitle: true, // Title on left as per image? Android default is left. Image shows it on left.
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications_none, color: Color(0xFF1F2937)),
-          ),
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.search, color: Color(0xFF1F2937)),
-          ),
-           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.more_vert, color: Color(0xFF1F2937)),
-          ),
+          Obx(() => IconButton(
+            onPressed: controller.toggleSearch,
+            icon: Icon(controller.isSearchActive.value ? Icons.close : Icons.search, color: const Color(0xFF1F2937)),
+          )),
+          const NotificationBadgeIcon(),
+          
+          //  IconButton(
+          //   onPressed: () {},
+          //   icon: const Icon(Icons.more_vert, color: Color(0xFF1F2937)),
+          // ),
         ],
       ),
       body: Obx(() {
-        if (controller.favoriteSalons.isEmpty) {
+        if (controller.filteredFavorites.isEmpty) {
           return Center(
             child: Text(
-              "No favorites yet",
+              controller.isSearchActive.value ? "No matching favorites" : "No favorites yet",
               style: TextStyle(color: Colors.grey[500]),
             ),
           );
         }
         return ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            itemCount: controller.favoriteSalons.length,
+            itemCount: controller.filteredFavorites.length,
             itemBuilder: (context, index) {
-              final salon = controller.favoriteSalons[index];
+              final salon = controller.filteredFavorites[index];
               return FavoriteSalonCard(
                 imageUrl: salon['imageUrl'] ?? 'https://via.placeholder.com/80',
                 name: salon['name'],
@@ -64,26 +76,32 @@ class FavoritesView extends GetView<FavoritesController> {
                    Get.toNamed(AppRoutes.SALON_DETAILS, arguments: salon);
                 },
                 onFavoriteTap: () {
-                  Get.defaultDialog(
-                    title: "Remove from Favorites?",
-                    middleText: "Are you sure you want to remove ${salon['name']} from your favorites?",
-                    textConfirm: "Remove",
-                    textCancel: "Cancel",
-                    confirmTextColor: Colors.white,
-                    buttonColor: const Color(0xFFE31E51),
-                    cancelTextColor: Colors.black,
-                    onConfirm: () {
-                      controller.removeFavorite(salon['id']);
-                      Get.back(); // Close dialog
-                      Get.snackbar('Removed', '${salon['name']} removed from favorites');
-                    },
+                  Get.dialog(
+                    RemoveFavoriteDialog(
+                      salonName: salon['name'],
+                      onRemove: () {
+                        controller.removeFavorite(salon['id']);
+                        Get.back(); // Close dialog
+                        Get.snackbar(
+                          'Removed', 
+                          '${salon['name']} removed from favorites',
+                          snackPosition: SnackPosition.BOTTOM,
+                          margin: const EdgeInsets.all(20),
+                          backgroundColor: Colors.black87,
+                          colorText: Colors.white,
+                        );
+                      },
+                      onCancel: () {
+                        Get.back(); // Close dialog
+                      },
+                    ),
                   );
                 },
               );
             },
           );
       }),
-      bottomNavigationBar: const UserBottomNavBar(currentIndex: 2),
+
     );
   }
 }

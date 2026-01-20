@@ -2,6 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:salon/app/services/mock_data_service.dart';
+import 'package:salon/app/data/models/order_model.dart';
+import 'package:salon/app/routes/app_routes.dart';
 
 class BookingController extends GetxController {
   // Salon Data
@@ -167,8 +170,33 @@ class BookingController extends GetxController {
     
     if (await canLaunchUrl(Uri.parse(googleMapsUrl))) {
       await launchUrl(Uri.parse(googleMapsUrl), mode: LaunchMode.externalApplication);
-    } else {
       Get.snackbar('Error', 'Could not launch maps');
     }
+  }
+
+  // Booking Confirmation
+  void confirmBooking() {
+    if (selectedDate.value == null || selectedTime.value.isEmpty) {
+      Get.snackbar('Error', 'Please select date and time');
+      return;
+    }
+
+    final newBooking = OrderModel(
+      id: DateTime.now().millisecondsSinceEpoch.toString(),
+      customerName: 'User', // Mock user
+      customerPhone: '9876543210',
+      customerImage: 'assets/profile_avatar.png',
+      status: OrderStatus.pending,
+      date: selectedDate.value!,
+      time: selectedTime.value,
+      services: selectedServices.map((s) => s['name'] as String).toList(),
+    );
+
+    Get.find<MockDataService>().addBooking(newBooking);
+
+    // Send Notification to Admin (Simulated by User notification for demo, or separate channel)
+    // In real app, this triggers FCM to Admin.
+    
+    Get.offAllNamed(AppRoutes.BOOKING_SUCCESS);
   }
 }

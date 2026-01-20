@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/services/auth_service.dart';
 
 class AdminOTPController extends GetxController {
   late String phoneNumber;
@@ -66,6 +67,7 @@ class AdminOTPController extends GetxController {
       return;
     }
 
+    Get.find<AuthService>().login('admin');
     Get.offAllNamed(AppRoutes.ADMIN_SUCCESS);
   }
 

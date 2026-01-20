@@ -1,6 +1,8 @@
 import 'package:get/get.dart';
 import 'package:salon/app/routes/app_routes.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:salon/app/modules/User_Screens/dashboard/controllers/user_dashboard_controller.dart' as salon_dashboard;
+import 'package:salon/app/services/mock_data_service.dart';
 
 class HomeController extends GetxController {
   final currentAddress = ''.obs;
@@ -18,45 +20,19 @@ class HomeController extends GetxController {
     {'name': 'Massage', 'icon': 'assets/icons/massage.png'},
   ].obs;
 
-  // Mock Data for Nearby Salons with Coordinates
-  final nearbySalons = <Map<String, dynamic>>[
-     {
-      'name': 'Naturals Parlour',
-      'location': 'Miyapur, Hyderabad',
-      'rating': 4.2,
-      'imageUrl': 'https://plus.unsplash.com/premium_photo-1661281350976-59b9514e5364?q=80&w=2969&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'lat': 17.5169,
-      'lng': 78.3462,
-      'distance': 0.0, // Calculated dynamically
-    },
-    {
-      'name': 'Green Trends',
-      'location': 'Kondapur, Hyderabad',
-      'rating': 4.5,
-      'imageUrl': 'https://images.unsplash.com/photo-1560066984-12186d30b7aa?q=80&w=2696&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'lat': 17.4622,
-      'lng': 78.3568,
-      'distance': 0.0,
-    },
-    {
-      'name': 'Lakme Salon',
-      'location': 'Gachibowli, Hyderabad',
-      'rating': 4.1,
-      'imageUrl': 'https://images.unsplash.com/photo-1633681926022-84c23e8cb2d6?q=80&w=2574&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'lat': 17.4401,
-      'lng': 78.3489,
-      'distance': 0.0,
-    },
-     {
-      'name': 'Toni & Guy',
-      'location': 'Jubilee Hills, Hyderabad',
-      'rating': 4.8,
-      'imageUrl': 'https://images.unsplash.com/photo-1521590832169-d7fcbe2af40f?q=80&w=2669&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-      'lat': 17.4312,
-      'lng': 78.4079,
-      'distance': 0.0,
-    },
-  ].obs;
+  // Selected Categories for Filtering
+  final selectedCategories = <String>[].obs;
+
+  void toggleCategory(String category) {
+    if (selectedCategories.contains(category)) {
+      selectedCategories.remove(category);
+    } else {
+      selectedCategories.add(category);
+    }
+  }
+
+  // Mock Data maintained in Global Service
+  List<Map<String, dynamic>> get nearbySalons => Get.find<MockDataService>().salons;
 
   // Top Rated Salons for Carousel
   final topRatedSalons = <Map<String, dynamic>>[
@@ -151,11 +127,18 @@ class HomeController extends GetxController {
     }
 
     // Update Nearby Salons
-    final updatedNearby = List<Map<String, dynamic>>.from(nearbySalons);
-    updateListDistances(updatedNearby);
+    // Since nearbySalons getter returns the RxList from service, we can allow it to remain referenced.
+    // However, to trigger reactivity on property changes inside the map in RxList, 
+    // usually we need to call .refresh() on the RxList.
+    
+    // Calculate distances in place
+    updateListDistances(nearbySalons);
+    
     // Sort by distance
-    updatedNearby.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
-    nearbySalons.value = updatedNearby;
+    nearbySalons.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
+    
+    // Manually notify listeners if needed, though sort() on RxList usually triggers rebuilds.
+    // Get.find<MockDataService>().salons.refresh();
 
 
     // Update Top Rated Salons
@@ -164,11 +147,74 @@ class HomeController extends GetxController {
     topRatedSalons.value = updatedTopRated;
   }
 
+  // Search State
+  final isSearchActive = false.obs;
+  final searchQuery = ''.obs;
+
+  List<Map<String, dynamic>> get filteredSalons {
+    // Both search query and selected categories are empty
+    if (searchQuery.isEmpty && selectedCategories.isEmpty) {
+      return nearbySalons;
+    }
+    
+    return nearbySalons.where((salon) {
+      bool nameMatches = true;
+      bool locationMatches = true;
+
+      // Filter by search query if it's not empty
+      if (searchQuery.isNotEmpty) {
+          nameMatches = salon['name'].toString().toLowerCase().contains(searchQuery.value.toLowerCase());
+          locationMatches = salon['location'].toString().toLowerCase().contains(searchQuery.value.toLowerCase());
+      } else {
+        nameMatches = false; // Reset to false to rely on OR condition if query is present?
+        // Wait, logic:
+        // if query is empty, we match all names/locations (effectively).
+        // if selectedCategories is empty, we match all categories.
+        // We want (Query Matches) AND (Category Matches)
+      }
+      
+      // Re-evaluating logic for clarity:
+      final matchesQuery = searchQuery.isEmpty || 
+                           salon['name'].toString().toLowerCase().contains(searchQuery.value.toLowerCase()) || 
+                           salon['location'].toString().toLowerCase().contains(searchQuery.value.toLowerCase());
+
+      bool categoryMatches = true;
+      if (selectedCategories.isNotEmpty) {
+        final salonCategories = List<String>.from(salon['categories'] ?? []);
+        // Check if salon matches ANY of the selected categories
+        categoryMatches = selectedCategories.any((cat) => salonCategories.contains(cat));
+      }
+
+      return matchesQuery && categoryMatches;
+    }).toList();
+  }
+
+  void toggleSearch() {
+    isSearchActive.value = !isSearchActive.value;
+    if (!isSearchActive.value) {
+      searchQuery.value = '';
+    }
+  }
+
+  void onSearchChanged(String query) {
+    searchQuery.value = query;
+  }
+
   void changeLocation() {
     // Navigate back to Maps with destination HOME to update location
     Get.toNamed(
       AppRoutes.MAPS,
       arguments: {'destination': AppRoutes.HOME}
     );
+  }
+
+  void showTestNotification() {
+    try {
+      // Find global Dashboard controller to trigger notification
+      final dashboardController = Get.find<salon_dashboard.UserDashboardController>();
+      dashboardController.showTestNotification();
+    } catch (e) {
+      Get.snackbar('Error', 'Could not find Dashboard Controller');
+    }
   }
 }

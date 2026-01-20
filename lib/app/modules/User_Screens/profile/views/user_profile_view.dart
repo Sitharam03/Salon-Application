@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:salon/app/modules/User_Screens/user_auth/controllers/user_profile_controller.dart';
+import 'package:salon/app/widgets/notification_badge_icon.dart';
+import 'package:salon/app/modules/User_Screens/profile/controllers/user_profile_controller.dart';
 import 'package:salon/app/routes/app_routes.dart';
-import 'package:salon/app/widgets/user_bottom_nav_bar.dart';
 
 class UserProfileView extends GetView<UserProfileController> {
   const UserProfileView({super.key});
@@ -14,20 +14,35 @@ class UserProfileView extends GetView<UserProfileController> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFF8F9FA),
         elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () => Get.back(), // Or navigation logic if needed
+        title: Obx(() => controller.isSearchActive.value 
+          ? TextField(
+              autofocus: true,
+              decoration: const InputDecoration(
+                hintText: 'Search options...',
+                border: InputBorder.none,
+                hintStyle: TextStyle(color: Colors.grey),
+              ),
+              style: const TextStyle(color: Colors.black),
+              onChanged: controller.onSearchChanged,
+            )
+          : const Text(
+              'Profile',
+              style: TextStyle(
+                color: Colors.black,
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            )
         ),
-        title: const Text(
-          'Profile',
-          style: TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        centerTitle: false, // Image shows left aligned "Profile" or Back + Title. Image shows "Profile" next to back arrow.
+        centerTitle: true,
         titleSpacing: 0,
+        actions: [
+          // Obx(() => IconButton(
+          //   onPressed: controller.toggleSearch,
+          //   icon: Icon(controller.isSearchActive.value ? Icons.close : Icons.search, color: const Color(0xFF1F2937)),
+          // )),
+          const NotificationBadgeIcon(),
+        ]
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -122,15 +137,6 @@ class UserProfileView extends GetView<UserProfileController> {
                       ],
                     ),
                     const SizedBox(height: 16),
-                    // const Text(
-                    //   'YOUR NAME',
-                    //   style: TextStyle(
-                    //     fontSize: 12,
-                    //     color: Color(0xFFE31E51),
-                    //     fontWeight: FontWeight.bold,
-                    //     letterSpacing: 1.0,
-                    //   ),
-                    // ),
                     const SizedBox(height: 4),
                     Obx(() => Text(
                       controller.name.value,
@@ -178,86 +184,90 @@ class UserProfileView extends GetView<UserProfileController> {
 
               const SizedBox(height: 32),
               
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'ACCOUNT',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              _buildListTile(
-                icon: Icons.person_outline,
-                iconColor: const Color(0xFF3B82F6), // Blue
-                iconBg: const Color(0xFFEFF6FF), // Light Blue
-                title: 'Edit Profile',
-                onTap: controller.editProfile,
-              ),
-              const SizedBox(height: 16),
-              _buildListTile(
-                icon: Icons.calendar_today_outlined,
-                iconColor: const Color(0xFF8B5CF6), // Purple
-                iconBg: const Color(0xFFF3E8FF), // Light Purple
-                title: 'My Bookings',
-                onTap: () {
-                    Get.toNamed(AppRoutes.MY_BOOKINGS);
-                },
-              ),
-              const SizedBox(height: 16),
-              _buildListTile(
-                icon: Icons.favorite_border,
-                iconColor: const Color(0xFFE31E51), // Red
-                iconBg: const Color(0xFFFFF1F2), // Light Red
-                title: 'Favourites',
-                onTap: () {
-                    Get.toNamed(AppRoutes.FAVORITES);
-                },
-              ),
+              Obx(() {
+                 if (controller.isSearchActive.value) {
+                    if (controller.filteredMenuItems.isEmpty) {
+                       return Center(child: Text("No matching options", style: TextStyle(color: Colors.grey[500])));
+                    }
+                    return Column(
+                      children: controller.filteredMenuItems.map((item) => _buildMenuItemFromMap(item)).toList(),
+                    );
+                 } else {
+                    final accountItems = controller.menuItems.where((i) => i['section'] == 'ACCOUNT').toList();
+                    final generalItems = controller.menuItems.where((i) => i['section'] == 'GENERAL').toList();
 
-              const SizedBox(height: 32),
-              const Align(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'GENERAL',
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.grey,
-                    letterSpacing: 1.0,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 16),
-              _buildListTile(
-                icon: Icons.settings_outlined,
-                iconColor: const Color(0xFFF59E0B), // Orange
-                iconBg: const Color(0xFFFFFBEB), // Light Orange
-                title: 'Settings',
-                onTap: () {
-                    Get.toNamed(AppRoutes.USER_SETTINGS);
-                },
-              ),
-              const SizedBox(height: 16),
-              _buildListTile(
-                icon: Icons.logout,
-                iconColor: const Color(0xFF374151), // Dark Grey
-                iconBg: const Color(0xFFF3F4F6), // Light Grey
-                title: 'Sign Out',
-                onTap: controller.signOut,
-              ),
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                         _buildSectionHeader('ACCOUNT'),
+                         const SizedBox(height: 16),
+                         ...accountItems.map((item) => Padding(
+                           padding: const EdgeInsets.only(bottom: 16.0),
+                           child: _buildMenuItemFromMap(item),
+                         )),
+                         
+                         const SizedBox(height: 16),
+                         _buildSectionHeader('GENERAL'),
+                         const SizedBox(height: 16),
+                         ...generalItems.map((item) => Padding(
+                           padding: const EdgeInsets.only(bottom: 16.0),
+                           child: _buildMenuItemFromMap(item),
+                         )),
+                      ],
+                    );
+                 }
+              }),
               const SizedBox(height: 30),
             ],
           ),
         ),
       ),
-      bottomNavigationBar: const UserBottomNavBar(currentIndex: 3),
     );
+  }
+
+  Widget _buildSectionHeader(String title) {
+    return Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        title,
+        style: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.grey,
+          letterSpacing: 1.0,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMenuItemFromMap(Map<String, dynamic> item) {
+    return _buildListTile(
+      icon: item['icon'],
+      iconColor: item['iconColor'],
+      iconBg: item['iconBg'],
+      title: item['title'],
+      onTap: () => _handleAction(item['action']),
+    );
+  }
+
+  void _handleAction(String action) {
+    switch (action) {
+      case 'editProfile':
+        controller.editProfile();
+        break;
+      case 'myBookings':
+        Get.toNamed(AppRoutes.MY_BOOKINGS);
+        break;
+      case 'favorites':
+        Get.toNamed(AppRoutes.FAVORITES);
+        break;
+      case 'settings':
+        Get.toNamed(AppRoutes.USER_SETTINGS);
+        break;
+      case 'signOut':
+        controller.signOut();
+        break;
+    }
   }
 
   Widget _buildListTile({

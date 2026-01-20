@@ -86,4 +86,29 @@ class FavoritesController extends GetxController {
   void removeFavorite(String id) {
     favoriteSalons.removeWhere((element) => element['id'] == id);
   }
+
+  // Search State
+  final isSearchActive = false.obs;
+  final searchQuery = ''.obs;
+
+  List<Map<String, dynamic>> get filteredFavorites {
+    if (searchQuery.isEmpty) {
+      return favoriteSalons;
+    }
+    return favoriteSalons.where((salon) {
+      return salon['name'].toString().toLowerCase().contains(searchQuery.value.toLowerCase()) || 
+             salon['location'].toString().toLowerCase().contains(searchQuery.value.toLowerCase());
+    }).toList();
+  }
+
+  void toggleSearch() {
+    isSearchActive.value = !isSearchActive.value;
+    if (!isSearchActive.value) {
+      searchQuery.value = '';
+    }
+  }
+
+  void onSearchChanged(String query) {
+    searchQuery.value = query;
+  }
 }
