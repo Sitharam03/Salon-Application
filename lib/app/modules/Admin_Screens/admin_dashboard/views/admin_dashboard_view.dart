@@ -6,10 +6,12 @@ import 'package:salon/app/modules/Admin_Screens/service_providers/views/service_
 import 'package:salon/app/modules/Admin_Screens/orders/views/orders_view.dart';
 import 'package:salon/app/modules/Admin_Screens/orders/controllers/orders_controller.dart';
 import 'package:salon/app/modules/Admin_Screens/orders/widgets/order_card.dart';
+import 'package:salon/app/data/models/order_model.dart';
 import 'package:salon/app/modules/Admin_Screens/profile/views/profile_view.dart';
 import 'package:salon/app/modules/Admin_Screens/shop_details/views/shop_details_view.dart';
 import 'package:salon/app/widgets/admin_bottom_nav_bar.dart';
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/modules/Admin_Screens/notifications/controllers/notifications_controller.dart';
 
 class AdminDashboardView extends GetView<AdminDashboardController> {
   const AdminDashboardView({super.key});
@@ -22,6 +24,7 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
         preferredSize: const Size.fromHeight(kToolbarHeight),
         child: Obx(() {
           return AppBar(
+            backgroundColor: Colors.white,
             elevation: 0,
             automaticallyImplyLeading: false,
             title: Text(
@@ -37,14 +40,62 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
               style: const TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
-                color: Color(0xFF1E232C),
+                color: Colors.black,
               ),
             ),
             actions: [
+              // Shop Status Toggle
+              // Obx(() {
+              //    bool isOpen = controller.isShopOpen.value;
+              //    return Column(
+              //      mainAxisAlignment: MainAxisAlignment.center,
+              //      children: [
+              //        SizedBox(
+              //          height: 24,
+              //          child: Switch(
+              //            value: isOpen,
+              //            activeColor: Colors.white,
+              //            activeTrackColor: const Color(0xFFE53935), // Red when open/active? Or Green?
+              //            // User said: "while open... on the toggle... while closes... off"
+              //            // Image shows Red toggle for "SHOP CLOSED" maybe? 
+              //            // Usually Green = Open, Red = Closed.
+              //            // Let's assume standard: Active(On) = Open (Green?), Inactive(Off) = Closed.
+              //            // BUT Image shows RED toggle and text "SHOP CLOSED" (hard to read).
+              //            // Wait, user said "while closes it should off".
+              //            // Let's make it: ON = OPEN (Green), OFF = CLOSED (Grey/Red).
+              //            // However, if user wants "Red" color from image which looks like a specific design...
+              //            // Let's stick to a custom design closer to the image if possible, or standard switch for functionality first.
+              //            // Image shows a Red background switch.
+              //            // Let's use Red for "Closed" state? Or is Red the primary brand color?
+              //            // Let's use Green for Open, Grey for Closed for clarity, or Red for Open/Action.
+              //            thumbColor: MaterialStateProperty.all(Colors.white),
+              //            trackColor: MaterialStateProperty.resolveWith((states) => 
+              //              isOpen ? const Color(0xFF43A047) : Colors.grey[300]
+              //            ),
+              //            onChanged: (val) {
+              //              // Toggle logic
+              //              controller.isShopOpen.value = val;
+              //            },
+              //          ),
+              //        ),
+              //        const SizedBox(height: 2),
+              //        Text(
+              //          isOpen ? 'SHOP OPEN' : 'SHOP CLOSED',
+              //          style: TextStyle(
+              //            fontSize: 8,
+              //            fontWeight: FontWeight.bold,
+              //            color: isOpen ? const Color(0xFF43A047) : const Color(0xFFE53935),
+              //          ),
+              //        )
+              //      ],
+              //    );
+              // }),
+              // const SizedBox(width: 12),
+
               Center(
                 child: _buildHeaderIcon(
                   Icons.notifications_none, 
-                  hasBadge: true,
+                  notificationCount: Get.find<NotificationsController>().unreadCount,
                   onTap: () => Get.toNamed(AppRoutes.NOTIFICATIONS),
                 ),
               ),
@@ -78,30 +129,39 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
     );
   }
 
-  Widget _buildHeaderIcon(IconData icon, {bool hasBadge = false, VoidCallback? onTap}) {
+  Widget _buildHeaderIcon(IconData icon, {int notificationCount = 0, VoidCallback? onTap}) {
     return GestureDetector(
       onTap: onTap,
       child: Stack(
+        clipBehavior: Clip.none,
         children: [
           Container(
             padding: const EdgeInsets.all(8),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: Colors.grey[200]!),
-            ),
             child: Icon(icon, color: const Color(0xFF1E232C), size: 24),
           ),
-          if (hasBadge)
+          if (notificationCount > 0)
             Positioned(
-              right: 8,
-              top: 8,
+              right: 0,
+              top: 0,
               child: Container(
-                width: 8,
-                height: 8,
+                padding: const EdgeInsets.all(4),
                 decoration: const BoxDecoration(
                   color: Color(0xFFE22424),
                   shape: BoxShape.circle,
+                ),
+                constraints: const BoxConstraints(
+                  minWidth: 16,
+                  minHeight: 16,
+                ),
+                child: Center(
+                  child: Text(
+                    notificationCount > 9 ? '9+' : notificationCount.toString(),
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -109,251 +169,298 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
       ),
     );
   }
+
 
   Widget _buildDashboardHome(BuildContext context) {
     // Ensure OrdersController is available
     final ordersController = Get.put(OrdersController());
 
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Welcome Text
-              const Text(
-                'Welcome back,',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              const SizedBox(height: 4),
-              const Row(
-                children: [
-                  Text(
-                    'Hi, Admin',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF1E232C),
-                    ),
-                  ),
-                  SizedBox(width: 8),
-                  Text(
-                    '👋',
-                    style: TextStyle(fontSize: 24),
+    return SingleChildScrollView(
+      physics: const BouncingScrollPhysics(),
+      child: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          children: [
+            const SizedBox(height: 10),
+            
+            // 1. Owner Access Card (Welcome)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.08),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
                   ),
                 ],
               ),
-              
-              const SizedBox(height: 32),
-              
-              // Today's Client's (Dynamic Stats)
-              const Text(
-                "Today's Client's",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Color(0xFF1E232C),
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              // Stats Row
-              Obx(() => Row(
+              child: Stack(
+                clipBehavior: Clip.none,
                 children: [
-                   Expanded(
-                    child: _StatsCard(
-                      title: 'PENDING',
-                      count: ordersController.pendingCount.toString(),
-                      color: const Color(0xFFFFC107), // Amber/Yellow
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _StatsCard(
-                    title: 'ACCEPTED',
-                      count: ordersController.acceptedCount.toString(),
-                      color: const Color(0xFF00C569), // Green
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: _StatsCard(
-                      title: 'REJECTED',
-                      count: ordersController.rejectedCount.toString(),
-                      color: const Color(0xFFF75555), // Red
-                    ),
-                  ),
-                ],
-              )),
-              
-              const SizedBox(height: 32),
-              
-              // All Requests Header
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      Get.to(() => const ShopDetailsView(), arguments: {'isEditing': true});
-                    },
-                    child: const Text(
-                      'All Requests',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF1E232C),
-                      ),
-                    ),
-                  ),
-                  // Action Buttons (Filter)
-                  Row(
-                    mainAxisSize: MainAxisSize.min, 
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const SizedBox(width: 8), 
-                      // Filter Dropdown
-                      PopupMenuButton<String>(
-                        color: Colors.white,
-                        onSelected: (value) => ordersController.changeFilter(value),
-                        itemBuilder: (context) => [
-                          const PopupMenuItem(value: 'All', child: Text('All Requests')),
-                          const PopupMenuItem(value: 'Pending', child: Text('Pending')),
-                          const PopupMenuItem(value: 'Accepted', child: Text('Accepted')),
-                          const PopupMenuItem(value: 'Rejected', child: Text('Rejected')),
-                        ],
-                        offset: const Offset(0, 40),
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: Colors.grey[300]!),
-                          ),
-                          child: Row(
-                            children: [
-                              Obx(() => Text(
-                                ordersController.selectedFilter.value == 'All' ? 'Filters' : ordersController.selectedFilter.value,
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w500,
-                                  color: Colors.black87,
-                                ),
-                              )),
-                              const SizedBox(width: 4),
-                              const Icon(Icons.filter_list, size: 16, color: Colors.black87),
-                            ],
-                          ),
+                      Text(
+                        'OWNER ACCESS',
+                        style: TextStyle(
+                          color: Colors.grey[400],
+                          fontSize: 11, // Small caps look
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 2.0,
                         ),
+                      ),
+                      const SizedBox(height: 16),
+                      // Responsive Text wrapper
+                      const Wrap(
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        children: [
+                          Text(
+                            'Hi, Admin',
+                            style: TextStyle(
+                              fontSize: 32, // Big bold font
+                              fontWeight: FontWeight.bold,
+                              color: Color(0xFF1E232C),
+                              height: 1.0,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Text(
+                            '👋',
+                            style: TextStyle(fontSize: 28),
+                          ),
+                        ],
                       ),
                     ],
                   ),
-                ],
-              ),
-              
-              const SizedBox(height: 20),
-              
-              // Orders List
-              Obx(() {
-                if (ordersController.filteredOrders.isEmpty) {
-                  return Container(
-                    width: double.infinity,
-                    height: 200,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.5),
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.grey[300]!),
-                    ),
-                    child: Center(
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(Icons.inbox_outlined, size: 48, color: Colors.grey[400]),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No requests found',
-                            style: TextStyle(color: Colors.grey[600]),
-                          ),
-                        ],
+                  // Watermark / Decoration (Faded Logo/Icon)
+                  Positioned(
+                    right: -10,
+                    top: -10,
+                    child: Opacity(
+                      opacity: 0.05,
+                      child: Icon(
+                        Icons.diamond_outlined, // Placeholder for geometric logo
+                        size: 90,
+                        color: Colors.red[300],
                       ),
                     ),
-                  );
-                }
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: const NeverScrollableScrollPhysics(),
-                  itemCount: ordersController.filteredOrders.length,
-                  itemBuilder: (context, index) {
-                    final order = ordersController.filteredOrders[index];
-                    return OrderCard(
-                      order: order,
-                      onAccept: () => ordersController.acceptOrder(order.id),
-                      onReject: () => ordersController.rejectOrder(order.id),
-                    );
-                  },
+                  )
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 20),
+
+            // 2. Performance Overview Card
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.08),
+                    blurRadius: 24,
+                    offset: const Offset(0, 10),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  // Card Header
+                  const Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        'PERFORMANCE OVERVIEW',
+                        style: TextStyle(
+                          color: Color(0xFF90A4AE), // Blue-grey for professional look
+                          fontSize: 11,
+                          fontWeight: FontWeight.bold,
+                          letterSpacing: 1.5,
+                        ),
+                      ),
+                      Icon(Icons.show_chart_rounded, color: Color(0xFFE53935), size: 20),
+                    ],
+                  ),
+                  const SizedBox(height: 30),
+                  
+                  // Stats Row with Dividers
+                  Obx(() => Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      // Scheduled (Pending)
+                      Expanded(
+                        child: _buildSimpleStatItem(
+                          count: ordersController.pendingCount.toString(),
+                          label: 'SCHEDULED',
+                          countColor: const Color(0xFF1E232C), // Black
+                        ),
+                      ),
+                      
+                      // Divider
+                      Container(width: 1, height: 40, color: Colors.grey[200]),
+                      
+                      // Completed (Accepted)
+                      Expanded(
+                        child: _buildSimpleStatItem(
+                          count: ordersController.acceptedCount.toString(),
+                          label: 'ACCEPTED',
+                          countColor: const Color(0xFFE53935), // Red highlight as in image
+                        ),
+                      ),
+                      
+                      // Divider
+                      Container(width: 1, height: 40, color: Colors.grey[200]),
+                      
+                      // Rejected
+                      Expanded(
+                        child: _buildSimpleStatItem(
+                          count: ordersController.rejectedCount.toString(),
+                          label: 'REJECTED',
+                          countColor: const Color(0xFF1E232C), // Black
+                        ),
+                      ),
+                    ],
+                  )),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            // 3. Requests List (With Filters)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Recent Requests',
+                  style: TextStyle(
+                    fontSize: 18,
+                    fontWeight: FontWeight.bold,
+                    color: Color(0xFF1E232C),
+                  ),
+                ),
+                 // Simple Filter Pill
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.grey.shade200),
+                  ),
+                  child: PopupMenuButton<String>(
+                    elevation: 1,
+                    color: Colors.white,
+                    surfaceTintColor: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Obx(() => Text(
+                          ordersController.selectedFilter.value == 'All' ? 'Filter' : ordersController.selectedFilter.value,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.grey[700],
+                          ),
+                        )),
+                        const SizedBox(width: 4),
+                        Icon(Icons.keyboard_arrow_down_rounded, size: 16, color: Colors.grey[400]),
+                      ],
+                    ),
+                    onSelected: (val) => ordersController.changeFilter(val),
+                    itemBuilder: (_) => [
+                        const PopupMenuItem(value: 'All', child: Text('All')),
+                        const PopupMenuItem(value: 'Pending', child: Text('Pending')),
+                        const PopupMenuItem(value: 'Accepted', child: Text('Accepted')),
+                        const PopupMenuItem(value: 'Rejected', child: Text('Rejected')),
+                    ]
+                  ),
+                ),
+              ],
+            ),
+            
+            const SizedBox(height: 16),
+
+             Obx(() {
+              if (ordersController.filteredOrders.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: const EdgeInsets.only(top: 40),
+                    child: Column(
+                      children: [
+                        Icon(Icons.inbox_outlined, size: 40, color: Colors.grey[300]),
+                        const SizedBox(height: 12),
+                        Text('No requests', style: TextStyle(color: Colors.grey[400], fontSize: 13)),
+                      ],
+                    ),
+                  ),
                 );
-              }),
-              const SizedBox(height: 20),
-            ],
-          ),
+              }
+              return ListView.separated(
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                itemCount: ordersController.filteredOrders.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 16),
+                itemBuilder: (context, index) {
+                  final order = ordersController.filteredOrders[index];
+                  // Pass a cleaner look to OrderCard or wrap it
+                  return OrderCard(
+                    order: order,
+                    onAccept: () => ordersController.showAcceptDialog(order),
+                    onReject: () => ordersController.showRejectDialog(order),
+                    onChangeProvider: () => ordersController.showChangeProviderDialog(order),
+                  );
+                },
+              );
+            }),
+            
+             const SizedBox(height: 80),
+          ],
         ),
       ),
     );
   }
-}
 
-class _StatsCard extends StatelessWidget {
-  final String title;
-  final String count;
-  final Color color;
-
-  const _StatsCard({
-    required this.title,
-    required this.count,
-    required this.color,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.3),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+  Widget _buildSimpleStatItem({required String count, required String label, required Color countColor}) {
+    return Column(
+      children: [
+        Text(
+          count,
+          style: TextStyle(
+            fontSize: 30, // Large responsive number
+            fontWeight: FontWeight.bold,
+            color: countColor,
+            height: 1.0,
           ),
-        ],
-      ),
-      child: Column(
-        children: [
-          Text(
-            title,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 10,
-              fontWeight: FontWeight.w600,
-              letterSpacing: 0.5,
-            ),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          label,
+          style: TextStyle(
+            fontSize: 10,
+            color: Colors.grey[400],
+            fontWeight: FontWeight.bold,
+            letterSpacing: 0.5,
           ),
-          const SizedBox(height: 8),
-          Text(
-            count,
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 32,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
+
+  Color _getStatusColor(OrderStatus status) {
+    switch(status) {
+      case OrderStatus.accepted: return const Color(0xFF43A047);
+      case OrderStatus.rejected: return const Color(0xFFE53935);
+      default: return const Color(0xFFFFB300);
+    }
+  }
 }
+

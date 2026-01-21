@@ -3,6 +3,8 @@ import 'package:salon/app/modules/Admin_Screens/orders/controllers/orders_contro
 
 class AdminDashboardController extends GetxController {
   final selectedIndex = 0.obs;
+  final isShopOpen = false.obs; // Default to closed or fetch from API
+
   
   // Filter & Date State logic delegated to OrdersController
 

@@ -1,348 +1,352 @@
 import 'package:flutter/material.dart';
 import 'package:salon/app/data/models/order_model.dart';
-import 'dart:io';
 
 class OrderCard extends StatelessWidget {
   final OrderModel order;
   final VoidCallback? onAccept;
   final VoidCallback? onReject;
+  final VoidCallback? onChangeProvider;
 
   const OrderCard({
     super.key,
     required this.order,
     this.onAccept,
     this.onReject,
+    this.onChangeProvider,
   });
 
   @override
   Widget build(BuildContext context) {
-    bool isPending = order.status == OrderStatus.pending;
-    
-    // Status Logic
-    Color statusColor;
-    String statusText;
-    IconData? statusIcon;
-    
-    switch (order.status) {
-      case OrderStatus.accepted:
-        statusColor = const Color(0xFF00C569); // Green
-        statusText = 'ACCEPTED';
-        statusIcon = Icons.check_circle;
-        break;
-      case OrderStatus.rejected:
-         statusColor = const Color(0xFFF75555); // Red
-        statusText = 'REJECTED';
-        statusIcon = Icons.cancel;
-        break;
-      case OrderStatus.pending:
-      default:
-         statusColor = const Color(0xFFFFC107); // Amber (for chip)
-        statusText = 'PENDING';
-        statusIcon = null;
-    }
-
-    // Border line color (Left side)
-    Color borderColor = order.status == OrderStatus.pending 
-        ? const Color(0xFFE22424) 
-        : const Color(0xFF00C569); 
-
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
+      padding: const EdgeInsets.all(20), // Spacious padding
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24), // Softer corners
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.04), // Very subtle shadow
+            blurRadius: 16,
+            offset: const Offset(0, 8),
           ),
         ],
       ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(16),
-        child: IntrinsicHeight(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // 1. Header: Avatar | Name & Service | Status
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Left Colored Bar
-              if (order.status == OrderStatus.pending || order.status == OrderStatus.accepted)
-              Container(
-                width: 6,
-                color: order.status == OrderStatus.pending ? const Color(0xFFE22424) : const Color(0xFF00C569),
-              ),
-              
-              // Content
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    children: [
-                      // Header: Image + Name + Phone + Status Chip
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Stack(
-                            children: [
-                              CircleAvatar(
-                                radius: 24,
-                                backgroundColor: Colors.grey[200],
-                                backgroundImage: order.customerImage != null 
-                                  ? AssetImage(order.customerImage!) as ImageProvider
-                                  : null,
-                                child: order.customerImage == null 
-                                  ? const Icon(Icons.person, color: Colors.grey)
-                                  : null,
-                              ),
-                              if (order.status == OrderStatus.pending)
-                              const Positioned(
-                                right: 0,
-                                bottom: 0,
-                                child: Icon(Icons.star, color: Colors.amber, size: 16),
-                              ),
-                            ],
+              // Avatar with Badge
+              Stack(
+                children: [
+                  Container(
+                    width: 56,
+                    height: 56,
+                    decoration: BoxDecoration(
+                      color: Colors.brown[200], // Placeholder color
+                      borderRadius: BorderRadius.circular(16), // Rounded square
+                      image: order.customerImage != null 
+                        ? DecorationImage(image: AssetImage(order.customerImage!), fit: BoxFit.cover)
+                        : const DecorationImage(
+                            image: NetworkImage('https://ui-avatars.com/api/?name=User&background=D7CCC8&color=5D4037'),
+                            fit: BoxFit.cover,
                           ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  order.customerName,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.bold,
-                                    color: Color(0xFF1E232C),
-                                  ),
-                                ),
-                                const SizedBox(height: 4),
-                                Row(
-                                  children: [
-                                    const Icon(Icons.phone, size: 14, color: Colors.grey),
-                                    const SizedBox(width: 4),
-                                    Text(
-                                      order.customerPhone,
-                                      style: const TextStyle(
-                                        fontSize: 13,
-                                        color: Colors.grey,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ),
-                          if (order.status == OrderStatus.pending)
-                          Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFFFEBEB), // Light Red/Pink
-                              borderRadius: BorderRadius.circular(4),
-                            ),
-                            child: Text(
-                              'PENDING',
-                              style: const TextStyle(
-                                color: Color(0xFFE22424),
-                                fontSize: 10,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 16),
-                      
-                      // Time Info
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(Icons.access_time, size: 20, color: Colors.grey),
-                          const SizedBox(width: 12),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                "${_formatDate(order.date)} ${order.time}",
-                                style: const TextStyle(
-                                  fontSize: 14,
-                                  color: Color(0xFF1E232C),
-                                  fontWeight: FontWeight.w600,
-                                ),
-                              ),
-                              const SizedBox(height: 2),
-                              Text(
-                                order.status == OrderStatus.pending ? "Timing Requested" : "Appointment Time",
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      
-                      const SizedBox(height: 12),
-                      
-                      // Services Info
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const Icon(Icons.cut_outlined, size: 20, color: Colors.grey),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  order.services.join(", "),
-                                  style: const TextStyle(
-                                    fontSize: 14,
-                                    color: Color(0xFF1E232C),
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 2),
-                                const Text(
-                                  "Services",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                    color: Colors.grey,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-
-                      const SizedBox(height: 16),
-                      
-                      // Action Buttons for Pending
-                      if (isPending)
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ElevatedButton(
-                                onPressed: onAccept,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFF00C569), // Green
-                                  elevation: 0,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.check, size: 18, color: Colors.white),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Accept',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 12),
-                            Expanded(
-                              child: OutlinedButton(
-                                onPressed: onReject,
-                                style: OutlinedButton.styleFrom(
-                                  foregroundColor: const Color(0xFFE22424),
-                                  side: const BorderSide(color: Color(0xFFE22424)),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(8),
-                                  ),
-                                  padding: const EdgeInsets.symmetric(vertical: 12),
-                                ),
-                                child: const Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.close, size: 18, color: Color(0xFFE22424)),
-                                    SizedBox(width: 8),
-                                    Text(
-                                      'Reject',
-                                      style: TextStyle(
-                                        color: Color(0xFFE22424),
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ],
-                        )
-                      else if (order.status == OrderStatus.accepted)
-                         Container(
-                          width: double.infinity,
-                           padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color:  const Color(0xFFE8FDF3), // Light Green
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFF00C569))
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.check_circle, size: 18, color: Color(0xFF00C569)),
-                                SizedBox(width: 8),
-                                Text(
-                                  'ACCEPTED',
-                                  style: TextStyle(
-                                    color: Color(0xFF00C569),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                         )
-                      else
-                        Container(
-                          width: double.infinity,
-                           padding: const EdgeInsets.symmetric(vertical: 12),
-                            decoration: BoxDecoration(
-                              color:  const Color(0xFFFFF0F0), // Light Red
-                              borderRadius: BorderRadius.circular(8),
-                              border: Border.all(color: const Color(0xFFC62828).withOpacity(0.3))
-                            ),
-                            child: const Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Icon(Icons.cancel, size: 18, color: Color(0xFFC62828)),
-                                SizedBox(width: 8),
-                                Text(
-                                  'REJECTED',
-                                  style: TextStyle(
-                                    color: Color(0xFFC62828),
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ],
-                            ),
-                         ),
-                    ],
+                    ),
                   ),
+                   if (order.status == OrderStatus.pending)
+                   Positioned(
+                     right: -4,
+                     bottom: -4,
+                      child: Container(
+                        padding: const EdgeInsets.all(4),
+                        decoration: const BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.cut, size: 12, color: Color(0xFFE53935)),
+                      ),
+                   )
+                ],
+              ),
+              const SizedBox(width: 16),
+              
+              // Name & Info
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      order.customerName,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF1E232C),
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        Icon(Icons.phone, size: 12, color: Colors.grey[500]),
+                        const SizedBox(width: 4),
+                        Text(
+                          order.customerPhone,
+                          style: TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
+
+              // Status Chip
+              _buildStatusChip(order.status),
             ],
           ),
+
+          const SizedBox(height: 24),
+          const Divider(height: 1, color: Color(0xFFF5F5F5)),
+          const SizedBox(height: 16),
+
+          // 2. Details: Services
+          _buildDetailRow(
+            icon: Icons.spa_outlined,
+            label: 'SERVICES',
+            content: order.services.join(", "),
+            contentStyle: const TextStyle(
+              color: Color(0xFF1E232C),
+              fontWeight: FontWeight.w600,
+              fontSize: 14,
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 3. Details: Service Provider (Clickable)
+          _buildDetailRow(
+            icon: Icons.person_outline,
+            label: 'SERVICE PROVIDER',
+            customContent: GestureDetector(
+               onTap: onChangeProvider,
+               child: RichText(
+                 text: TextSpan(
+                   style: const TextStyle(fontSize: 14, color: Color(0xFF1E232C)),
+                   children: [
+                     TextSpan(text: '${order.serviceProviderRole}: ', style: const TextStyle(fontWeight: FontWeight.w500)),
+                     TextSpan(
+                       text: order.serviceProviderName, 
+                       style: const TextStyle(
+                         fontWeight: FontWeight.bold, 
+                         color: Color(0xFFE53935), // Red highlighting as requested
+                         decoration: TextDecoration.underline,
+                         decorationColor: Color(0xFFE53935), 
+                       )
+                     ),
+                   ],
+                 ),
+               ),
+            ),
+          ),
+
+          const SizedBox(height: 16),
+
+          // 4. Details: Date & Time
+          Row(
+            children: [
+               const Icon(Icons.calendar_today_outlined, size: 16, color: Color(0xFF90A4AE)),
+               const SizedBox(width: 12),
+               Text(
+                 _getRelativeDate(order.date),
+                 style: const TextStyle(
+                   fontWeight: FontWeight.bold,
+                   color: Color(0xFF1E232C),
+                   fontSize: 14,
+                 ),
+               ),
+               
+               const SizedBox(width: 24),
+               
+               const Icon(Icons.access_time, size: 16, color: Color(0xFF90A4AE)),
+               const SizedBox(width: 12),
+               Text(
+                 order.time, // e.g. "10:30 AM"
+                 style: const TextStyle(
+                   fontWeight: FontWeight.bold,
+                   color: Color(0xFF1E232C),
+                   fontSize: 14,
+                 ),
+               ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // 5. Action Buttons / Status Bar
+          if (order.status == OrderStatus.pending)
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: onReject,
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF90A4AE),
+                      side: BorderSide(color: Colors.grey.shade200),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text('REJECT', style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: onAccept,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFE53935), // Red
+                      elevation: 4,
+                      shadowColor: const Color(0xFFE53935).withOpacity(0.4),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: const Text('ACCEPT', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+                  ),
+                ),
+              ],
+            )
+          else if (order.status == OrderStatus.accepted)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF0FDF4),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFDCFCE7)),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.check_circle, color: Color(0xFF00C569), size: 18),
+                  SizedBox(width: 8),
+                  Text('CONFIRMED', style: TextStyle(color: Color(0xFF00C569), fontWeight: FontWeight.bold, letterSpacing: 1.0)),
+                ],
+              ),
+            )
+          else 
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 14),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFEF2F2),
+                borderRadius: BorderRadius.circular(16),
+                border: Border.all(color: const Color(0xFFFEE2E2)),
+              ),
+              child: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.cancel, color: Color(0xFFEF4444), size: 18),
+                  SizedBox(width: 8),
+                  Text('REJECTED', style: TextStyle(color: Color(0xFFEF4444), fontWeight: FontWeight.bold, letterSpacing: 1.0)),
+                ],
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStatusChip(OrderStatus status) {
+    Color bg;
+    Color text;
+    String label;
+
+    switch (status) {
+      case OrderStatus.accepted:
+        bg = const Color(0xFFE8FDF3);
+        text = const Color(0xFF00C569);
+        label = 'ACCEPTED';
+        break;
+      case OrderStatus.rejected:
+        bg = const Color(0xFFFFEBEE);
+        text = const Color(0xFFE53935);
+        label = 'REJECTED';
+        break;
+      case OrderStatus.pending:
+      default:
+        bg = const Color(0xFFFFF8E1);
+        text = const Color(0xFFFFB300);
+        label = 'PENDING';
+        break;
+    }
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        color: bg,
+        borderRadius: BorderRadius.circular(8),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(
+          color: text,
+          fontSize: 10,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 0.5,
         ),
       ),
     );
   }
 
-  String _formatDate(DateTime date) {
-    // Simple formatter. For prod use intl package
-    final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    final weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
-    return "${months[date.month - 1]} ${date.day}, ${weekDays[date.weekday - 1]}";
+  Widget _buildDetailRow({required IconData icon, required String label, String? content, Widget? customContent, TextStyle? contentStyle}) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(icon, size: 16, color: const Color(0xFF90A4AE)), // Icon color
+        const SizedBox(width: 12),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 10,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFF90A4AE),
+                  letterSpacing: 1.0,
+                ),
+              ),
+              const SizedBox(height: 4),
+              customContent ?? Text(
+                content ?? '',
+                style: contentStyle ?? const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w500,
+                  color: Color(0xFF1E232C),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+
+  String _getRelativeDate(DateTime date) {
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final tomorrow = DateTime(now.year, now.month, now.day + 1);
+    final inputDate = DateTime(date.year, date.month, date.day);
+
+    if (inputDate == today) return "Today";
+    if (inputDate == tomorrow) return "Tomorrow";
+    
+    // Fallback format
+     final months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return "${months[date.month - 1]} ${date.day}";
   }
 }

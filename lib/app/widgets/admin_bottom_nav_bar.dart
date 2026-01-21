@@ -40,8 +40,8 @@ class AdminBottomNavBar extends StatelessWidget {
             label: 'Home',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.spa_outlined),
-            activeIcon: Icon(Icons.spa),
+            icon: Icon(Icons.cut),
+            activeIcon: Icon(Icons.cut),
             label: 'Services',
           ),
           BottomNavigationBarItem(

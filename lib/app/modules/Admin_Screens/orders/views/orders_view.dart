@@ -169,8 +169,9 @@ class OrdersView extends GetView<OrdersController> {
                   final order = orders[index];
                   return OrderCard(
                     order: order,
-                    onAccept: () => controller.acceptOrder(order.id),
-                    onReject: () => controller.rejectOrder(order.id),
+                    onAccept: () => controller.showAcceptDialog(order),
+                    onReject: () => controller.showRejectDialog(order),
+                    onChangeProvider: () => controller.showChangeProviderDialog(order),
                   );
                 },
               );

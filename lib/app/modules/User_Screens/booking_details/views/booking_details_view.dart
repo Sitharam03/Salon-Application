@@ -5,6 +5,7 @@ import 'package:salon/app/modules/User_Screens/booking_details/widgets/salon_inf
 import 'package:salon/app/modules/User_Screens/booking_details/widgets/booking_status_timeline.dart';
 import 'package:salon/app/modules/User_Screens/booking_details/widgets/salon_contact_widget.dart';
 import 'package:salon/app/modules/User_Screens/booking_details/widgets/service_list_widget.dart';
+import 'package:salon/app/modules/User_Screens/booking_details/widgets/service_provider_card.dart';
 
 class BookingDetailsView extends GetView<BookingDetailsController> {
   const BookingDetailsView({super.key});
@@ -22,9 +23,9 @@ class BookingDetailsView extends GetView<BookingDetailsController> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Get.back(),
         ),
-        actions: [
-          IconButton(icon: const Icon(Icons.more_horiz, color: Colors.black), onPressed: () {}),
-        ],
+        // actions: [
+        //   IconButton(icon: const Icon(Icons.more_horiz, color: Colors.black), onPressed: () {}),
+        // ],
       ),
       body: Obx(() {
         final booking = controller.booking;
@@ -68,10 +69,23 @@ class BookingDetailsView extends GetView<BookingDetailsController> {
                       time: booking['time'],
                     ),
                     const SizedBox(height: 24),
+                    
+                    // 3.1 Service Provider (Below Timeline, Above Service List)
+                    // 3.1 Service Provider (Below Timeline, Above Service List)
+                    ServiceProviderCard(
+                      providerName: booking['serviceProviderName'] ?? 'Any Provider',
+                      providerRole: booking['serviceProviderRole'] ?? 'Salon Team',
+                      providerImage: booking['serviceProviderImage'] ?? 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png',
+                    ),
+                    const SizedBox(height: 24),
 
                     // 4. Service List
                     if (booking['services'] != null)
                       ServiceListWidget(services: booking['services']),
+                    
+                    const SizedBox(height: 24),
+                    
+
                     
                     const SizedBox(height: 100), // Spacing for buttons
                   ],

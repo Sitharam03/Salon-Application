@@ -14,7 +14,23 @@ class ServicesController extends GetxController {
   final TextEditingController minsController = TextEditingController();
   final TextEditingController priceController = TextEditingController();
 
-  final categories = ['Hair', 'Beard', 'Facial & Spa', 'Skin Care', 'Massage'].obs;
+  final _allCategories = ['Hair', 'Beard', 'Facial & Spa', 'Skin Care', 'Massage'];
+
+  // Categories for the Service List View (depends on viewGender)
+  List<String> get categories {
+    if (viewGender.value == 'Women') {
+      return _allCategories.where((c) => c != 'Beard').toList();
+    }
+    return _allCategories;
+  }
+
+  // Categories for the Add Service Form (depends on selectedGender)
+  List<String> get formCategories {
+    if (selectedGender.value == 'Women') {
+      return _allCategories.where((c) => c != 'Beard').toList();
+    }
+    return _allCategories;
+  }
 
   // Dynamic Data
   final services = <ServiceModel>[].obs;
@@ -73,7 +89,8 @@ class ServicesController extends GetxController {
     hrsController.clear();
     minsController.clear();
     priceController.clear();
-    selectedCategory.value = categories.first;
+    // Default to first valid category for current gender
+    selectedCategory.value = formCategories.first;
     // selectedGender.value = 'Men'; // Keep previous gender or reset? Keeping for better UX.
     isEditing.value = false;
     editingServiceId = null;
@@ -102,6 +119,7 @@ class ServicesController extends GetxController {
   
   void startAddService() {
     clearForm();
+    selectedGender.value = viewGender.value; // Sync with current view
     Get.toNamed(AppRoutes.ADD_SERVICE);
   }
 

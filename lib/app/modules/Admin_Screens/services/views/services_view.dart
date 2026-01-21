@@ -159,12 +159,12 @@ class ServicesView extends GetView<ServicesController> {
                     Container(
                       padding: const EdgeInsets.all(8),
                       decoration: BoxDecoration(
-                        color: title == 'Hair' ? const Color(0xFFFFEBEB) : (title == 'Beard' ? const Color(0xFFFFF4E3) : const Color(0xFFE8F1FF)),
+                        color: title == 'Hair' ? const Color(0xFFFFEBEB) : (title == 'Beard' ? const Color(0xFFFFEBEB) : const Color(0xFFFFEBEB)),
                         shape: BoxShape.circle,
                       ),
                       child: Icon(
                          getIcon(title), 
-                         color: title == 'Hair' ? const Color(0xFFE22424) : (title == 'Beard' ? Colors.orange : Colors.blue),
+                         color: title == 'Hair' ? const Color(0xFFE22424) : (title == 'Beard' ? Color(0xFFE22424) : Color(0xFFE22424)),
                          size: 20
                       ),
                     ),
@@ -225,14 +225,18 @@ class ServicesView extends GetView<ServicesController> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      service.name,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Color(0xFF1E232C),
+                    Expanded(
+                      child: Text(
+                        service.name,
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                          color: Color(0xFF1E232C),
+                        ),
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
+                    const SizedBox(width: 8),
                      Text(
                       "\$${service.price.toStringAsFixed(0)}",
                       style: const TextStyle(

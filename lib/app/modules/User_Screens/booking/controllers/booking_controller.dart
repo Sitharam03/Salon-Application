@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:salon/app/services/mock_data_service.dart';
 import 'package:salon/app/data/models/order_model.dart';
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:intl/intl.dart';
 
 class BookingController extends GetxController {
   // Salon Data
@@ -29,7 +30,7 @@ class BookingController extends GetxController {
   // Slot Selection
   final selectedDate = Rxn<DateTime>();
   final selectedTime = ''.obs;
-  final selectedProvider = ''.obs;
+  final selectedProvider = 'Any Provider'.obs;
 
   // Tabs (Dynamic Categories from Backend)
   final categories = ['Men', 'Women'].obs;
@@ -73,34 +74,42 @@ class BookingController extends GetxController {
     }).toList();
   }
 
-  final providers = ['Vignesh', 'Prasad', 'Ram', 'Pramod'];
+  final providers = ['Any Provider', 'Vignesh', 'Prasad', 'Ram', 'Pramod'];
+
   final timeSlots = [
     '06:00 AM', '07:00 AM', '08:00 AM', 
     '09:00 AM', '10:00 AM', '11:00 AM',
     '12:00 PM', '02:00 PM', '03:00 PM',
-    '04:00 PM', '05:00 PM', '06:00 PM'
+    '04:00 PM', '05:00 PM', '06:00 PM',
+    '07:00 PM', '08:00 PM', '09:00 PM',
+    '10:00 PM', '11:00 PM'
   ];
 
   @override
   void onInit() {
     super.onInit();
+    
+    // Default to Today
+    selectedDate.value = DateTime.now();
+    
+    // Select default time immediately
+    _selectDefaultTime();
+    
+    // Listen to date changes to reset time
+    ever(selectedDate, (_) {
+      // If user changes date, let's try to keep selected time if valid, or select new default
+       if (!isTimeSlotAvailable(selectedTime.value)) {
+          selectedTime.value = ''; // Reset if invalid
+          _selectDefaultTime();
+       }
+    });
+
     if (Get.arguments != null) {
       if (Get.arguments is Map<String, dynamic>) {
          salonData.value = Get.arguments;
          
-         // Handle Reschedule Date
          if (Get.arguments['rescheduleDate'] != null) {
            try {
-             // Assuming date format is "OCT 10" or similar, which is hard to parse directly without year.
-             // For this demo, since mock data sends "OCT 10", we'll just try to match it or default to today if complex.
-             // Ideally argument should be a DateTime object or ISO string.
-             // Let's assume we pass a DateTime object for simplicity in this flow, 
-             // or sticking to the string if that's what we have.
-             
-             // If we passed the mock string, we can't easily convert "OCT 10" to DateTime without year.
-             // So I will update the logic to set 'selectedDate' to today + index if it matches? 
-             // Or better: Logic in BookingDetailsController should pass a DateTime.
-             
              if (Get.arguments['rescheduleDate'] is DateTime) {
                 selectedDate.value = Get.arguments['rescheduleDate'];
              }
@@ -112,8 +121,6 @@ class BookingController extends GetxController {
     }
     
     // Auto-scroll logic (Infinite)
-    // Start at a large index to allow scrolling back manually if needed, 
-    // but primarily to support continuous forward scrolling.
     const initialPage = 1000;
     pageController = PageController(initialPage: initialPage);
     activePageIndex.value = initialPage; // Initialize observable
@@ -124,10 +131,61 @@ class BookingController extends GetxController {
         pageController.animateToPage(
           nextPage,
           duration: const Duration(milliseconds: 500),
-          curve: Curves.linear, // Smoother continuous-like feel, or easeIn
+          curve: Curves.linear, 
         );
       }
     });
+  }
+
+  void _selectDefaultTime() {
+    // Find first available slot
+    for (var slot in timeSlots) {
+      if (isTimeSlotAvailable(slot)) {
+        selectedTime.value = slot;
+        return; 
+      }
+    }
+    // If no slots available today (late night), maybe clear selection
+    if (selectedTime.isEmpty && timeSlots.isNotEmpty) {
+       // Optional: could default to first one anyway if we want strict behavior, currently empty
+    }
+  }
+
+  bool isTimeSlotAvailable(String timeSlot) {
+    if (timeSlot.isEmpty) return false;
+    if (selectedDate.value == null) return true;
+
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final selected = DateTime(selectedDate.value!.year, selectedDate.value!.month, selectedDate.value!.day);
+
+    // If selected date is in the future, all slots are available
+    if (selected.isAfter(today)) return true;
+    
+    // If selected date is in the past (shouldn't happen with UI), unavailable
+    if (selected.isBefore(today)) return false;
+
+    // If selected date is Today, check time
+    try {
+      // Parse "06:00 AM" to Hour/Minute
+      final format = DateFormat("hh:mm a"); 
+      // Note: DateFormat parses to 1970-01-01. We need to combine with Today.
+      final parsedTime = format.parse(timeSlot);
+      
+      final slotDateTime = DateTime(
+        now.year, 
+        now.month, 
+        now.day, 
+        parsedTime.hour, 
+        parsedTime.minute
+      );
+
+      // Allow if slot is after now (or maybe give a buffer?)
+      return slotDateTime.isAfter(now);
+    } catch (e) {
+      print("Error parsing time slot: $e");
+      return true; // Fallback
+    }
   }
 
   @override
@@ -190,6 +248,11 @@ class BookingController extends GetxController {
       date: selectedDate.value!,
       time: selectedTime.value,
       services: selectedServices.map((s) => s['name'] as String).toList(),
+      serviceProviderName: selectedProvider.value,
+      serviceProviderRole: selectedProvider.value == 'Any Provider' ? 'Salon Team' : 'Senior Stylist',
+      serviceProviderImage: selectedProvider.value == 'Any Provider' 
+          ? 'https://cdn-icons-png.flaticon.com/512/3237/3237472.png' // Generic Avatar 
+          : 'https://i.pravatar.cc/150?u=${selectedProvider.value}', // Mock image based on name
     );
 
     Get.find<MockDataService>().addBooking(newBooking);

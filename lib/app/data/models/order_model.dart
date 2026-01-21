@@ -19,5 +19,12 @@ class OrderModel {
     required this.date,
     required this.time,
     required this.services,
+    this.serviceProviderName = "Any Stylist", // Default
+    this.serviceProviderRole = "Stylist", // Default
+    this.serviceProviderImage,
   });
+  
+  String serviceProviderName;
+  String serviceProviderRole;
+  String? serviceProviderImage;
 }

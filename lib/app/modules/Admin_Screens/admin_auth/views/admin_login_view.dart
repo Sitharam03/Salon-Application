@@ -147,7 +147,8 @@ class AdminLoginView extends GetView<AdminLoginController> {
                             const Spacer(), // Pushes content to center
                             const SizedBox(height: 20),
                             Center(
-                              child: Column(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   GestureDetector(
                                     onTap: controller.goToVendorSignup,
@@ -160,14 +161,14 @@ class AdminLoginView extends GetView<AdminLoginController> {
                                       ),
                                     ),
                                   ),
-                                  const SizedBox(height: 16),
+                                  const SizedBox(width: 5),
                                   GestureDetector(
                                     onTap: controller.goToCustomerSignin,
                                     child: Text(
-                                      'Back to user login',
+                                      'User login',
                                       style: TextStyle(
                                         fontSize: 14,
-                                        color: Colors.blue[600],
+                                        color: AppColors.primary,
                                         fontWeight: FontWeight.w500,
                                       ),
                                     ),

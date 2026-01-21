@@ -44,6 +44,9 @@ class NotificationsController extends GetxController {
     ),
   ].obs;
 
+  // Unread count
+  int get unreadCount => notifications.where((n) => !n.isRead).length;
+
   // Grouped by section
   List<NotificationModel> get todayNotifications => 
       notifications.where((n) => n.timeAgo.contains('m ago') || n.timeAgo.contains('h ago')).toList();

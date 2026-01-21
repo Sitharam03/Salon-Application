@@ -69,7 +69,7 @@ class AddServiceView extends GetView<ServicesController> {
                       value: controller.selectedCategory.value,
                       isExpanded: true,
                       icon: const Icon(Icons.keyboard_arrow_down),
-                      items: controller.categories.map((String value) {
+                      items: controller.formCategories.map((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
                           child: Text(value),

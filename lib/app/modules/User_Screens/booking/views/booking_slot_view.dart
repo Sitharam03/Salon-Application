@@ -274,23 +274,35 @@ class BookingSlotView extends GetView<BookingController> {
                     spacing: 12,
                     runSpacing: 12,
                     children: controller.timeSlots.map((time) {
+                       final isAvailable = controller.isTimeSlotAvailable(time);
                        final isSelected = controller.selectedTime.value == time;
-                       return GestureDetector(
-                         onTap: () => controller.selectedTime.value = time,
-                         child: Container(
-                           width: (Get.width - 32 - 24) / 3, // 3 columns approx
-                           padding: const EdgeInsets.symmetric(vertical: 12),
-                           decoration: BoxDecoration(
-                             color: isSelected ? const Color(0xFFE31E51) : Colors.white,
-                             borderRadius: BorderRadius.circular(12),
-                             border: Border.all(color: isSelected ? const Color(0xFFE31E51) : Colors.grey[200]!),
-                           ),
-                           alignment: Alignment.center,
-                           child: Text(
-                             time,
-                             style: TextStyle(
-                               color: isSelected ? Colors.white : Colors.black,
-                               fontWeight: FontWeight.w600,
+                       
+                       return IgnorePointer(
+                         ignoring: !isAvailable,
+                         child: GestureDetector(
+                           onTap: () {
+                             if (isAvailable) {
+                               controller.selectedTime.value = time;
+                             }
+                           },
+                           child: Opacity(
+                             opacity: isAvailable ? 1.0 : 0.4,
+                             child: Container(
+                               width: (Get.width - 32 - 24) / 3, // 3 columns approx
+                               padding: const EdgeInsets.symmetric(vertical: 12),
+                               decoration: BoxDecoration(
+                                 color: isSelected ? const Color(0xFFE31E51) : Colors.white,
+                                 borderRadius: BorderRadius.circular(12),
+                                 border: Border.all(color: isSelected ? const Color(0xFFE31E51) : Colors.grey[200]!),
+                               ),
+                               alignment: Alignment.center,
+                               child: Text(
+                                 time,
+                                 style: TextStyle(
+                                   color: isSelected ? Colors.white : Colors.black,
+                                   fontWeight: FontWeight.w600,
+                                 ),
+                               ),
                              ),
                            ),
                          ),
@@ -303,38 +315,35 @@ class BookingSlotView extends GetView<BookingController> {
                   const SizedBox(height: 16),
                   
                   // Provider List
-                   SizedBox(
-                    height: 50,
-                    child: ListView.builder(
-                      scrollDirection: Axis.horizontal,
-                      itemCount: controller.providers.length,
-                      itemBuilder: (context, index) {
-                         final provider = controller.providers[index];
-                         return Obx(() {
-                            final isSelected = controller.selectedProvider.value == provider;
-                            return GestureDetector(
-                              onTap: () => controller.selectedProvider.value = provider,
-                              child: Container(
-                                margin: const EdgeInsets.only(right: 12),
-                                padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? const Color(0xFFE31E51) : Colors.white,
-                                  borderRadius: BorderRadius.circular(12),
-                                  border: Border.all(color: isSelected ? const Color(0xFFE31E51) : Colors.grey[200]!),
-                                ),
-                                child: Text(
-                                  provider,
-                                  style: TextStyle(
-                                    color: isSelected ? Colors.white : Colors.black,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                              ),
-                            );
-                         });
-                      },
-                    ),
-                  ),
+                  Obx(() => Wrap(
+                    spacing: 12,
+                    runSpacing: 12,
+                    children: controller.providers.map((provider) {
+                       final isSelected = controller.selectedProvider.value == provider;
+                       return GestureDetector(
+                         onTap: () => controller.selectedProvider.value = provider,
+                         child: Container(
+                           width: (Get.width - 32 - 24) / 3, // 3 columns
+                           padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                           decoration: BoxDecoration(
+                             color: isSelected ? const Color(0xFFE31E51) : Colors.white,
+                             borderRadius: BorderRadius.circular(12),
+                             border: Border.all(color: isSelected ? const Color(0xFFE31E51) : Colors.grey[200]!),
+                           ),
+                           alignment: Alignment.center,
+                           child: Text(
+                             provider,
+                             textAlign: TextAlign.center,
+                             style: TextStyle(
+                               color: isSelected ? Colors.white : Colors.black,
+                               fontWeight: FontWeight.w600,
+                               fontSize: 13,
+                             ),
+                           ),
+                         ),
+                       );
+                    }).toList(),
+                  )),
                    const SizedBox(height: 100), // Space for bottom button
                 ],
               ),
