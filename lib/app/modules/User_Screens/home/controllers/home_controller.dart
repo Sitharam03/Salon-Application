@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:salon/app/routes/app_routes.dart';
 import 'package:geolocator/geolocator.dart';
@@ -99,18 +100,103 @@ class HomeController extends GetxController {
     },
   ].obs;
 
+  // Track if location has been manually selected/confirmed
+  var isLocationSelected = false;
+
+  final isLoadingLocation = true.obs;
+  final locationError = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
-    // Get arguments passed from Maps
-    if (Get.arguments != null) {
-      currentAddress.value = Get.arguments['address'] ?? '';
-      currentCity.value = Get.arguments['city'] ?? '';
-      userLat = Get.arguments['latitude'];
-      userLng = Get.arguments['longitude'];
+    // Defer state updates to avoid 'setState during build' if controller is initialized during view build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      // Get arguments passed from Maps
+      if (Get.arguments != null && Get.arguments['address'] != null) {
+        _updateFromArgs(Get.arguments);
+        isLoadingLocation.value = false;
+      } else {
+          // Auto-fetch on start
+          checkAndFetchLocation();
+      }
+    });
+  }
+
+  void _updateFromArgs(dynamic arguments) {
+       currentAddress.value = arguments['address'] ?? '';
+       currentCity.value = arguments['city'] ?? '';
+       userLat = arguments['latitude'];
+       userLng = arguments['longitude'];
+       isLocationSelected = true; // Mark as selected so we don't loop
+       calculateDistances();
+  }
+  
+  Future<void> checkAndFetchLocation({bool isUserInteraction = false}) async {
+    // If already selected via Maps, don't auto-fetch/redirect again (unless forcing retry)
+    if (isLocationSelected && !isUserInteraction) return;
+
+    isLoadingLocation.value = true;
+    locationError.value = '';
+    
+    try {
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        if (isUserInteraction) {
+           // If user clicked 'Enable Location', open settings
+           await Geolocator.openLocationSettings();
+           // Wait a bit for user to potentially enable it, or just rely on next check?
+           // Actually, openLocationSettings returns Future<bool> on some platforms or just Future<void>
+           // Checking again immediately might fail. The user typically comes back to app.
+           // Can we listen to stream? For simplicity, we open settings and suggest checking again.
+           
+           // Re-check after a small delay or let user click again? 
+           // Better: Set error message telling them to enable it.
+        }
+        locationError.value = 'Location services are disabled. Please enable them.';
+        isLoadingLocation.value = false;
+        return;
+      }
+
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          locationError.value = 'Location permission denied. We need location to show nearby salons.';
+          isLoadingLocation.value = false;
+          return;
+        }
+      }
       
-      calculateDistances();
+      if (permission == LocationPermission.deniedForever) {
+        if (isUserInteraction) {
+           await Geolocator.openAppSettings();
+        }
+        locationError.value = 'Location permissions are permanently denied. Please enable in settings.';
+        isLoadingLocation.value = false;
+        return;
+      }
+
+      // Permission granted
+      Position position = await Geolocator.getCurrentPosition();
+      
+      // REDIRECT TO MAPS
+      Get.offNamed(
+        AppRoutes.MAPS, 
+        arguments: {
+           'latitude': position.latitude,
+           'longitude': position.longitude,
+           'destination': AppRoutes.HOME
+        }
+      );
+      
+    } catch (e) {
+      locationError.value = 'Failed to get location: $e';
+      isLoadingLocation.value = false;
     }
+  }
+  
+  void retryLocation() {
+    checkAndFetchLocation(isUserInteraction: true);
   }
   
   void calculateDistances() {
@@ -211,12 +297,47 @@ class HomeController extends GetxController {
       bool categoryMatches = true;
       if (selectedCategories.isNotEmpty) {
         final salonCategories = List<String>.from(salon['categories'] ?? []);
-        // Check if salon matches ANY of the selected categories
-        categoryMatches = selectedCategories.any((cat) => salonCategories.contains(cat));
+        
+        // Semantic Keywork Matching
+        categoryMatches = selectedCategories.any((selectedCat) {
+           final keywords = _getSemanticKeywords(selectedCat);
+           
+           // Check if ANY salon category matches ANY keyword for this selected category
+           return salonCategories.any((sCat) {
+              final sCatLower = sCat.toString().toLowerCase();
+              return keywords.any((keyword) => sCatLower.contains(keyword));
+           });
+        });
       }
 
       return matchesQuery && categoryMatches;
     }).toList();
+  }
+  
+  // Helper to map UI Categories to broader semantic keywords
+  List<String> _getSemanticKeywords(String category) {
+    final catLower = category.toLowerCase();
+    
+    // Default keywords include the category itself
+    final keywords = <String>{catLower};
+    
+    if (catLower.contains('hair')) {
+      keywords.addAll(['hair', 'cut', 'style', 'color', 'blow', 'dry']);
+    }
+    if (catLower.contains('beard')) {
+      keywords.addAll(['beard', 'shave', 'trim', 'groom']);
+    }
+    if (catLower.contains('facial') || catLower.contains('spa')) {
+      keywords.addAll(['facial', 'spa', 'massage', 'manicure', 'pedicure', 'scrub', 'clean']);
+    }
+    if (catLower.contains('skin')) {
+      keywords.addAll(['skin', 'makeup', 'facial', 'bleach', 'wax', 'clean']);
+    }
+    if (catLower.contains('massage')) {
+      keywords.addAll(['massage', 'spa', 'reflexology', 'therapy']);
+    }
+    
+    return keywords.toList();
   }
 
   void toggleSearch() {

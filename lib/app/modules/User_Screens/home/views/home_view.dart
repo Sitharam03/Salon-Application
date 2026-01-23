@@ -18,6 +18,7 @@ class HomeView extends GetView<HomeController> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+      resizeToAvoidBottomInset: false, // Prevents keyboard from squeezing layout
       body: SafeArea(
         child: Column(
           children: [
@@ -36,7 +37,7 @@ class HomeView extends GetView<HomeController> {
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: TextField(
-                             autofocus: true,
+                             autofocus: false,
                              decoration: const InputDecoration(
                                hintText: 'Search salons...',
                                border: InputBorder.none,
@@ -99,7 +100,51 @@ class HomeView extends GetView<HomeController> {
             ),
 
             Expanded(
-              child: SingleChildScrollView(
+              child: Obx(() {
+                if (controller.isLoadingLocation.value) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+
+                if (controller.locationError.value.isNotEmpty) {
+                  return Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(24.0),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.location_off_outlined, size: 64, color: Colors.grey),
+                          const SizedBox(height: 16),
+                          Text(
+                            'Location Required',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.grey[800],
+                            ),
+                          ),
+                          const SizedBox(height: 8),
+                          Text(
+                            controller.locationError.value,
+                            textAlign: TextAlign.center,
+                            style: TextStyle(color: Colors.grey[600]),
+                          ),
+                          const SizedBox(height: 24),
+                          ElevatedButton(
+                            onPressed: controller.retryLocation,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFE31E51),
+                              padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                            ),
+                            child: const Text('Enable Location', style: TextStyle(color: Colors.white)),
+                          ),
+                        ],
+                      ),
+                    ),
+                  );
+                }
+
+                return SingleChildScrollView(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -310,7 +355,8 @@ class HomeView extends GetView<HomeController> {
                     const SizedBox(height: 24),
                   ],
                 ),
-              ),
+              );
+              }),
             ),
           ],
         ),
