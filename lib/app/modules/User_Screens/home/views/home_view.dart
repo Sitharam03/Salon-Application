@@ -162,17 +162,27 @@ class HomeView extends GetView<HomeController> {
                           IconData iconData;
                           // Mapping strings to Icons for demo
                           switch (category['name'].toString().toLowerCase()) {
-                            case 'haircut':
+                            case 'hair':
+                            case 'haircut': // Backward compatibility
                               iconData = Icons.content_cut;
                               break;
-                            case 'makeup':
+                            case 'beard':
+                              iconData = Icons.face;
+                              break;
+                            case 'facial & spa':
+                            case 'facial':
+                            case 'spa':
+                              iconData = Icons.spa;
+                              break;
+                            case 'skin care':
+                            case 'makeup': // Assume mapped roughly or separate
                               iconData = Icons.brush;
                               break;
                             case 'manicure':
                               iconData = Icons.fingerprint;
                               break;
                             case 'massage':
-                              iconData = Icons.spa;
+                              iconData = Icons.back_hand;
                               break;
                             default:
                               iconData = Icons.category;
@@ -272,9 +282,22 @@ class HomeView extends GetView<HomeController> {
                                   location: salon['location'],
                                   rating: salon['rating'],
                                   distance: salon['distanceText'] ?? 'N/A',
+                                  status: salon['status'],
                                   isFavorite: isFav,
                                   onFavoriteTap: () => favController.toggleFavorite(salon),
                                   onTap: () {
+                                      if (salon['status']?.toString().toLowerCase() == 'closed') {
+                                        Get.snackbar(
+                                          'Shop Closed', 
+                                          'This salon is currently closed and not accepting bookings.',
+                                          snackPosition: SnackPosition.BOTTOM,
+                                          margin: const EdgeInsets.all(20),
+                                          backgroundColor: Colors.black87,
+                                          colorText: Colors.white,
+                                          duration: const Duration(seconds: 2),
+                                        );
+                                        return;
+                                      }
                                       Get.toNamed(AppRoutes.SALON_DETAILS, arguments: salon);
                                   },
                                 );

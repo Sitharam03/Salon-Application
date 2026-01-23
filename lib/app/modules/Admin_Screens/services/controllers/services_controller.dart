@@ -2,6 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:salon/app/data/models/service_model.dart';
 import 'package:salon/app/routes/app_routes.dart';
+import 'package:salon/app/services/mock_data_service.dart';
 
 class ServicesController extends GetxController {
   // Observables for add service form
@@ -18,22 +19,24 @@ class ServicesController extends GetxController {
 
   // Categories for the Service List View (depends on viewGender)
   List<String> get categories {
+    final allCats = Get.find<MockDataService>().categories;
     if (viewGender.value == 'Women') {
-      return _allCategories.where((c) => c != 'Beard').toList();
+      return allCats.where((c) => c != 'Beard').toList();
     }
-    return _allCategories;
+    return allCats;
   }
 
   // Categories for the Add Service Form (depends on selectedGender)
   List<String> get formCategories {
+    final allCats = Get.find<MockDataService>().categories;
     if (selectedGender.value == 'Women') {
-      return _allCategories.where((c) => c != 'Beard').toList();
+      return allCats.where((c) => c != 'Beard').toList();
     }
-    return _allCategories;
+    return allCats;
   }
 
   // Dynamic Data
-  final services = <ServiceModel>[].obs;
+  List<ServiceModel> get services => Get.find<MockDataService>().services;
   final expandedCategories = <String, bool>{}.obs;
 
   // Edit Mode
@@ -43,12 +46,6 @@ class ServicesController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    // Populate with some dummy data for initial view
-    services.addAll([
-      ServiceModel(id: '1', name: 'Hair Cut', category: 'Hair', gender: 'Men', duration: '45 Mins', price: 25.0, description: 'Standard haircut'),
-      ServiceModel(id: '2', name: 'Hair Coloring', category: 'Hair', gender: 'Men', duration: '90 Mins', price: 60.0),
-      ServiceModel(id: '3', name: 'Beard Trim', category: 'Beard', gender: 'Men', duration: '30 Mins', price: 15.0),
-    ]);
     
     // Default expand 'Hair'
     expandedCategories['Hair'] = true;
@@ -134,31 +131,25 @@ class ServicesController extends GetxController {
       duration = "${hrsController.text} Hrs $duration";
     }
 
-    if (isEditing.value && editingServiceId != null) {
       // Update existing
-      int index = services.indexWhere((s) => s.id == editingServiceId);
-      if (index != -1) {
-        services[index] = ServiceModel(
-          id: editingServiceId,
-          name: serviceNameController.text,
-          category: selectedCategory.value,
-          gender: selectedGender.value,
-          duration: duration,
-          price: double.tryParse(priceController.text) ?? 0.0,
-        );
-        services.refresh(); // Trigger UI update for list
-      }
+    final newService = ServiceModel(
+      id: isEditing.value && editingServiceId != null ? editingServiceId! : DateTime.now().millisecondsSinceEpoch.toString(),
+      name: serviceNameController.text,
+      category: selectedCategory.value,
+      gender: selectedGender.value,
+      duration: duration,
+      price: double.tryParse(priceController.text) ?? 0.0,
+      description: '', // Add field if needed
+    );
+
+    if (isEditing.value) {
+      Get.find<MockDataService>().updateService(newService);
     } else {
-      // Add new
-      services.add(ServiceModel(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        name: serviceNameController.text,
-        category: selectedCategory.value,
-        gender: selectedGender.value,
-        duration: duration,
-        price: double.tryParse(priceController.text) ?? 0.0,
-      ));
+      Get.find<MockDataService>().addService(newService);
     }
+    
+    // Manual refresh
+    Get.find<MockDataService>().services.refresh();
     
     // Ensure the category added to is expanded so user sees it
     expandedCategories[selectedCategory.value] = true;

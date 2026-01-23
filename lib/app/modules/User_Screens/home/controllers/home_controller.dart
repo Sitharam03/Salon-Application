@@ -13,12 +13,13 @@ class HomeController extends GetxController {
   double? userLng;
 
   // Categories Data
-   final categories = <Map<String, dynamic>>[
-    {'name': 'Haircut', 'icon': 'assets/icons/haircut.png'}, 
-    {'name': 'Makeup', 'icon': 'assets/icons/makeup.png'},
-    {'name': 'Manicure', 'icon': 'assets/icons/manicure.png'},
-    {'name': 'Massage', 'icon': 'assets/icons/massage.png'},
-  ].obs;
+  // Categories Data
+   List<Map<String, dynamic>> get categories {
+     return Get.find<MockDataService>().categories.map((cat) => {
+       'name': cat, 
+       // You can add logic here to fetch icon path if moved to service
+     }).toList();
+   }
 
   // Selected Categories for Filtering
   final selectedCategories = <String>[].obs;
@@ -46,6 +47,7 @@ class HomeController extends GetxController {
       'lng': 78.4079,
       'distance': 0.0,
       'distanceText': '0 km',
+      'status': 'Open',
     },
     {
       'name': 'Mirrors Luxury',
@@ -57,6 +59,7 @@ class HomeController extends GetxController {
       'lng': 78.3489,
       'distance': 0.0,
       'distanceText': '0 km',
+      'status': 'Closed',
     },
      {
       'name': 'Bounce Salon',
@@ -68,6 +71,7 @@ class HomeController extends GetxController {
       'lng': 78.4483,
       'distance': 0.0,
       'distanceText': '0 km',
+      'status': 'Open',
     },
     {
       'name': 'Juice Salon',
@@ -79,6 +83,7 @@ class HomeController extends GetxController {
       'lng': 78.3808,
       'distance': 0.0,
       'distanceText': '0 km',
+      'status': 'Closed',
     },
      {
       'name': 'Vurve Salon',
@@ -90,6 +95,7 @@ class HomeController extends GetxController {
       'lng': 78.3915,
       'distance': 0.0,
       'distanceText': '0 km',
+      'status': 'Open',
     },
   ].obs;
 
@@ -134,8 +140,18 @@ class HomeController extends GetxController {
     // Calculate distances in place
     updateListDistances(nearbySalons);
     
-    // Sort by distance
-    nearbySalons.sort((a, b) => (a['distance'] as double).compareTo(b['distance'] as double));
+    // Sort by Status (Open first) then Distance
+    nearbySalons.sort((a, b) {
+      final statusA = (a['status'] ?? '').toString().toLowerCase();
+      final statusB = (b['status'] ?? '').toString().toLowerCase();
+
+      // Prioritize 'open' status
+      if (statusA == 'open' && statusB != 'open') return -1;
+      if (statusA != 'open' && statusB == 'open') return 1;
+
+      // If status priority is same, sort by distance
+      return (a['distance'] as double).compareTo(b['distance'] as double);
+    });
     
     // Manually notify listeners if needed, though sort() on RxList usually triggers rebuilds.
     // Get.find<MockDataService>().salons.refresh();
@@ -144,6 +160,20 @@ class HomeController extends GetxController {
     // Update Top Rated Salons
     final updatedTopRated = List<Map<String, dynamic>>.from(topRatedSalons);
     updateListDistances(updatedTopRated);
+
+    // Sort Top Rated Salons by Status then Distance
+    updatedTopRated.sort((a, b) {
+      final statusA = (a['status'] ?? '').toString().toLowerCase();
+      final statusB = (b['status'] ?? '').toString().toLowerCase();
+
+      // Prioritize 'open' status
+      if (statusA == 'open' && statusB != 'open') return -1;
+      if (statusA != 'open' && statusB == 'open') return 1;
+
+      // If status priority is same, sort by distance
+      return (a['distance'] as double).compareTo(b['distance'] as double);
+    });
+
     topRatedSalons.value = updatedTopRated;
   }
 

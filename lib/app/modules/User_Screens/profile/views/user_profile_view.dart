@@ -12,7 +12,7 @@ class UserProfileView extends GetView<UserProfileController> {
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA), // Slightly off-white/light grey background
       appBar: AppBar(
-        backgroundColor: const Color(0xFFF8F9FA),
+        backgroundColor: Colors.white,
         elevation: 0,
         title: Obx(() => controller.isSearchActive.value 
           ? TextField(

@@ -38,6 +38,7 @@ class AppRoutes {
   static const String MAPS = '/maps';
   static const String ONBOARDING = '/onboarding';
   static const SHOP_DETAILS = '/shop-details';
+  static const SHOP_TIMINGS = '/shop-timings';
   static const ADMIN_DASHBOARD = '/admin-dashboard';
   static const SERVICES = '/services';
   static const ADD_SERVICE = '/add-service';

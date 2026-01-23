@@ -38,18 +38,31 @@ class TopRatedSalonsView extends GetView<HomeController> {
             final salon = controller.topRatedSalons[index];
             return Obx(() {
                final isFav = favController.isFavorite(salon['name']);
-               return SalonCard(
-                imageUrl: salon['imageUrl'],
-                name: salon['name'],
-                location: salon['location'],
-                rating: salon['rating'],
-                distance: salon['distanceText'] ?? 'N/A',
-                isFavorite: isFav,
-                onFavoriteTap: () => favController.toggleFavorite(salon),
-                onTap: () {
-                  Get.toNamed(AppRoutes.SALON_DETAILS, arguments: salon);
-                },
-              );
+                return SalonCard(
+                  imageUrl: salon['imageUrl'],
+                  name: salon['name'],
+                  location: salon['location'],
+                  rating: salon['rating'],
+                  distance: salon['distanceText'] ?? 'N/A',
+                  status: salon['status'],
+                  isFavorite: isFav,
+                  onFavoriteTap: () => favController.toggleFavorite(salon),
+                  onTap: () {
+                    if (salon['status']?.toString().toLowerCase() == 'closed') {
+                      Get.snackbar(
+                        'Shop Closed', 
+                        'This salon is currently closed and not accepting bookings.',
+                        snackPosition: SnackPosition.BOTTOM,
+                        margin: const EdgeInsets.all(20),
+                        backgroundColor: Colors.black87,
+                        colorText: Colors.white,
+                        duration: const Duration(seconds: 2),
+                      );
+                      return;
+                    }
+                    Get.toNamed(AppRoutes.SALON_DETAILS, arguments: salon);
+                  },
+                );
             });
           },
         );

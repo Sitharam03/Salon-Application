@@ -99,7 +99,7 @@ class AdminSignupView extends GetView<AdminSignupController> {
                       child: TextField(
                         controller: controller.nameController,
                         decoration: InputDecoration(
-                          hintText: 'Durga Prasad',
+                          hintText: 'Enter Full Name',
                           prefixIcon: const Icon(Icons.person_outline, color: Colors.grey),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
@@ -128,7 +128,7 @@ class AdminSignupView extends GetView<AdminSignupController> {
                         controller: controller.emailController,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
-                          hintText: 'gdurgaprasad065@gmail.com',
+                          hintText: 'Enter Email Address',
                           prefixIcon: const Icon(Icons.mail_outline, color: Colors.grey),
                           border: InputBorder.none,
                           contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),

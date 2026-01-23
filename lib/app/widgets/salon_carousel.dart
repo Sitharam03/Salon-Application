@@ -108,22 +108,22 @@ class _SalonCarouselState extends State<SalonCarousel> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            if (salon['discount'] != null)
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                decoration: BoxDecoration(
-                                  color: const Color(0xFFE31E51),
-                                  borderRadius: BorderRadius.circular(8),
-                                ),
-                                child: Text(
-                                  salon['discount'],
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
+                            // if (salon['discount'] != null)
+                            //   Container(
+                            //     padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            //     decoration: BoxDecoration(
+                            //       color: const Color(0xFFE31E51),
+                            //       borderRadius: BorderRadius.circular(8),
+                            //     ),
+                            //     child: Text(
+                            //       salon['discount'],
+                            //       style: const TextStyle(
+                            //         color: Colors.white,
+                            //         fontSize: 10,
+                            //         fontWeight: FontWeight.bold,
+                            //       ),
+                            //     ),
+                            //   ),
                             // Distance Badge
                              Container(
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),

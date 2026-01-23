@@ -27,6 +27,7 @@ import 'package:salon/app/modules/Admin_Screens/profile/bindings/profile_binding
 import 'package:salon/app/modules/Admin_Screens/profile/views/profile_view.dart';
 import 'package:salon/app/modules/Admin_Screens/shop_details/bindings/shop_details_binding.dart';
 import 'package:salon/app/modules/Admin_Screens/shop_details/views/shop_details_view.dart';
+import 'package:salon/app/modules/Admin_Screens/shop_details/views/shop_timings_view.dart';
 import 'package:salon/app/modules/Admin_Screens/admin_dashboard/bindings/admin_dashboard_binding.dart';
 import 'package:salon/app/modules/Admin_Screens/admin_dashboard/views/admin_dashboard_view.dart';
 import 'package:salon/app/modules/Admin_Screens/service_providers/bindings/service_providers_binding.dart';
@@ -197,6 +198,11 @@ class AppPages {
       binding: ShopDetailsBinding(),
     ),
     GetPage(
+      name: AppRoutes.SHOP_TIMINGS,
+      page: () => const ShopTimingsView(),
+      binding: ShopDetailsBinding(),
+    ),
+    GetPage(
       name: AppRoutes.ADMIN_DASHBOARD,
       page: () => const AdminDashboardView(),
       binding: AdminDashboardBinding(),
@@ -216,7 +222,7 @@ class AppPages {
       page: () => const AddServiceProviderView(),
       binding: ServiceProvidersBinding(),
     ),
-    
+
     // Settings Routes
     GetPage(
       name: AppRoutes.SETTINGS,

@@ -17,7 +17,7 @@ class ProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     // Ensure controller is available
     final controller = Get.put(ShopDetailsController());
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFF8F9FA), // Light background
       // appBar: AppBar(
@@ -48,41 +48,46 @@ class ProfileView extends StatelessWidget {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            
             // 1. Header with Cover & Profile
             SizedBox(
               height: 260, // Increased height for cover photo
               child: Stack(
                 children: [
-                   // Cover Photo Carousel
-                   Obx(() => Stack(
-                     children: [
-                       CoverPhotoCarousel(
-                         images: controller.coverImages.toList(),
-                         onAddTap: controller.pickCoverImage,
-                       ),
-                       // Edit/Add Cover Photo Button
-                       Positioned(
-                         top: 16,
-                         right: 16,
-                         child: GestureDetector(
-                           onTap: controller.pickCoverImage,
-                           child: Container(
-                             padding: const EdgeInsets.all(8),
-                             decoration: BoxDecoration(
-                               color: Colors.black.withOpacity(0.5),
-                               shape: BoxShape.circle,
-                             ),
-                             child: const Icon(Icons.camera_alt, color: Colors.white, size: 20),
-                           ),
-                         ),
-                       ),
-                         // Optional: Indicator dots could be added here if desired
-                     ],
-                   )),
-                  
+                  // Cover Photo Carousel
+                  Obx(
+                    () => Stack(
+                      children: [
+                        CoverPhotoCarousel(
+                          images: controller.coverImages.toList(),
+                          onAddTap: controller.pickCoverImage,
+                        ),
+                        // Edit/Add Cover Photo Button
+                        Positioned(
+                          top: 16,
+                          right: 16,
+                          child: GestureDetector(
+                            onTap: controller.pickCoverImage,
+                            child: Container(
+                              padding: const EdgeInsets.all(8),
+                              decoration: BoxDecoration(
+                                color: Colors.black.withOpacity(0.5),
+                                shape: BoxShape.circle,
+                              ),
+                              child: const Icon(
+                                Icons.camera_alt,
+                                color: Colors.white,
+                                size: 20,
+                              ),
+                            ),
+                          ),
+                        ),
+                        // Optional: Indicator dots could be added here if desired
+                      ],
+                    ),
+                  ),
+
                   // Profile Image
-                   Positioned(
+                  Positioned(
                     bottom: 0,
                     left: 0,
                     right: 0,
@@ -92,31 +97,36 @@ class ProfileView extends StatelessWidget {
                           GestureDetector(
                             onTap: controller.pickProfileImage,
                             child: Container(
-                              padding: const EdgeInsets.all(4), // White border effect
+                              padding: const EdgeInsets.all(
+                                4,
+                              ), // White border effect
                               decoration: const BoxDecoration(
                                 color: Colors.white,
                                 shape: BoxShape.circle,
                               ),
                               child: Obx(() {
-                                 final image = controller.profileImage.value;
-                                 if (image != null) {
-                                   return CircleAvatar(
-                                     radius: 60,
-                                     backgroundImage: kIsWeb 
-                                         ? NetworkImage(image.path) 
-                                         : FileImage(File(image.path)) as ImageProvider,
-                                     backgroundColor: Colors.grey[200],
-                                   );
-                                 }
-                                 return CircleAvatar(
-                                   radius: 60,
-                                   backgroundColor: Colors.grey[200],
-                                   backgroundImage: const AssetImage('assets/profile_avatar.png'),
-                                 );
+                                final image = controller.profileImage.value;
+                                if (image != null) {
+                                  return CircleAvatar(
+                                    radius: 60,
+                                    backgroundImage: kIsWeb
+                                        ? NetworkImage(image.path)
+                                        : FileImage(File(image.path))
+                                              as ImageProvider,
+                                    backgroundColor: Colors.grey[200],
+                                  );
+                                }
+                                return CircleAvatar(
+                                  radius: 60,
+                                  backgroundColor: Colors.grey[200],
+                                  backgroundImage: const AssetImage(
+                                    'assets/profile_avatar.png',
+                                  ),
+                                );
                               }),
                             ),
                           ),
-                           Positioned(
+                          Positioned(
                             bottom: 0,
                             right: 0,
                             child: GestureDetector(
@@ -134,7 +144,11 @@ class ProfileView extends StatelessWidget {
                                     ),
                                   ],
                                 ),
-                                child: const Icon(Icons.edit, size: 16, color: Colors.white),
+                                child: const Icon(
+                                  Icons.edit,
+                                  size: 16,
+                                  color: Colors.white,
+                                ),
                               ),
                             ),
                           ),
@@ -145,13 +159,13 @@ class ProfileView extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 16),
-            
+
             // Name
             Text(
-              controller.shopNameController.text.isNotEmpty 
-                  ? controller.shopNameController.text 
+              controller.shopNameController.text.isNotEmpty
+                  ? controller.shopNameController.text
                   : 'Naturals Parlour',
               style: const TextStyle(
                 fontSize: 22,
@@ -159,29 +173,28 @@ class ProfileView extends StatelessWidget {
                 color: Color(0xFF1E232C),
               ),
             ),
-            
+
             const SizedBox(height: 4),
-            
+
             // Location
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 const Icon(Icons.location_on, size: 16, color: Colors.grey),
                 const SizedBox(width: 4),
-                Obx(() => Text(
-                  controller.selectedAddress.value.isNotEmpty
-                      ? controller.selectedAddress.value
-                      : 'Miyapur, Hyderabad', 
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Colors.grey,
+                Obx(
+                  () => Text(
+                    controller.selectedAddress.value.isNotEmpty
+                        ? controller.selectedAddress.value
+                        : 'Miyapur, Hyderabad',
+                    style: const TextStyle(fontSize: 14, color: Colors.grey),
                   ),
-                )),
+                ),
               ],
             ),
-            
+
             const SizedBox(height: 12),
-            
+
             // Rating Pill
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -205,9 +218,9 @@ class ProfileView extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 30),
-            
+
             // 2. Shop Information
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -216,16 +229,16 @@ class ProfileView extends StatelessWidget {
                 children: [
                   _buildSectionHeader('SHOP INFORMATION'),
                   const SizedBox(height: 16),
-                  
+
                   InfoRow(
                     icon: Icons.person,
                     iconBgColor: const Color(0xFFE3F2FD), // Light Blue
                     title: 'Owner Name',
-                    value: controller.ownerNameController.text.isNotEmpty 
-                        ? controller.ownerNameController.text 
+                    value: controller.ownerNameController.text.isNotEmpty
+                        ? controller.ownerNameController.text
                         : 'Vignesh Kumar',
                   ),
-                  
+
                   InfoRow(
                     icon: Icons.phone,
                     iconBgColor: const Color(0xFFE8F5E9), // Light Green
@@ -234,7 +247,7 @@ class ProfileView extends StatelessWidget {
                         ? controller.contactNumberController.text
                         : '6123456789',
                   ),
-                  
+
                   InfoRow(
                     icon: Icons.home,
                     iconBgColor: const Color(0xFFFBE9E7), // Light Orange
@@ -246,9 +259,9 @@ class ProfileView extends StatelessWidget {
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // 3. Manage Shop
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -257,66 +270,115 @@ class ProfileView extends StatelessWidget {
                 children: [
                   _buildSectionHeader('MANAGE SHOP'),
                   const SizedBox(height: 16),
-                  
+
                   ProfileListItem(
                     icon: Icons.spa,
                     iconBgColor: const Color(0xFFF3E5F5), // Light Purple
                     iconColor: const Color(0xFF9C27B0),
                     title: 'Manage Services',
                     onTap: () {
-                      final dashboardController = Get.find<AdminDashboardController>();
-                      dashboardController.changeTabIndex(1); // Switch to Services Tab
-                     },
+                      final dashboardController =
+                          Get.find<AdminDashboardController>();
+                      dashboardController.changeTabIndex(
+                        1,
+                      ); // Switch to Services Tab
+                    },
                   ),
-                  
+
                   ProfileListItem(
                     icon: Icons.people,
                     iconBgColor: const Color(0xFFE8EAF6), // Light Indigo
                     iconColor: const Color(0xFF3F51B5),
                     title: 'Manage Service Providers',
                     onTap: () {
-                      final dashboardController = Get.find<AdminDashboardController>();
-                      dashboardController.changeTabIndex(2); // Switch to Providers Tab
+                      final dashboardController =
+                          Get.find<AdminDashboardController>();
+                      dashboardController.changeTabIndex(
+                        2,
+                      ); // Switch to Providers Tab
                     },
                   ),
-                  
+
+                  ProfileListItem(
+                    icon: Icons.schedule,
+                    iconBgColor: const Color(0xFFF3E5F5), // Light Purple
+                    iconColor: const Color(0xFF9C27B0),
+                    title: 'Edit Shop Timings',
+                    onTap: () {
+                      controller.navigateToShopTimings();
+                    },
+                  ),
+
                   ProfileListItem(
                     icon: Icons.star_outline,
                     iconBgColor: const Color(0xFFFFEBEE), // Light Red
                     iconColor: const Color(0xFFE22424),
                     title: 'Shop Reviews',
                     onTap: () {
-                       Get.toNamed(AppRoutes.REVIEWS);
+                      Get.toNamed(AppRoutes.REVIEWS);
                     },
                   ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 20),
-            
+
             // 4. General
-             Padding(
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 20),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildSectionHeader('GENERAL'),
                   const SizedBox(height: 16),
-                  
+
                   ProfileListItem(
                     icon: Icons.settings,
                     iconBgColor: const Color(0xFFFFF3E0), // Light Orange
                     iconColor: const Color(0xFFFF9800),
                     title: 'Settings',
                     onTap: () {
-                         Get.toNamed(AppRoutes.SETTINGS);
+                      Get.toNamed(AppRoutes.SETTINGS);
                     },
                   ),
                 ],
               ),
             ),
-            
+
+            const SizedBox(height: 20),
+
+            // Sign Out Button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: GestureDetector(
+                onTap: controller.logout,
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(vertical: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30),
+                    border: Border.all(color: Colors.grey[200]!),
+                  ),
+                  child: const Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.logout, color: Color(0xFFE22424)),
+                      SizedBox(width: 8),
+                      Text(
+                        'Sign Out',
+                        style: TextStyle(
+                          color: Color(0xFFE22424),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
             const SizedBox(height: 40),
           ],
         ),
@@ -336,7 +398,3 @@ class ProfileView extends StatelessWidget {
     );
   }
 }
-
-
-
-

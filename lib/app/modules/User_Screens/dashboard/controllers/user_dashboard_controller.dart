@@ -14,6 +14,12 @@ class UserDashboardController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    
+    // Check for initial index from arguments
+    if (Get.arguments != null && Get.arguments is Map && Get.arguments['initialIndex'] != null) {
+      changeTabIndex(Get.arguments['initialIndex']);
+    }
+
     // Auto-trigger test notification after 5 seconds for demonstration
     Future.delayed(const Duration(seconds: 5), () {
       showTestNotification();

@@ -58,7 +58,7 @@ class AdminLoginController extends GetxController {
     Future.delayed(const Duration(seconds: 2), () {
       _isLoading.value = false;
       // Navigate to success or home
-      Get.toNamed(AppRoutes.ADMIN_SUCCESS); 
+      Get.offAllNamed(AppRoutes.ADMIN_DASHBOARD); 
     });
   }
 

@@ -19,9 +19,9 @@ class BookingSlotView extends GetView<BookingController> {
           icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () => Get.back(),
         ),
-        actions: [
-          IconButton(icon: const Icon(Icons.search, color: Colors.black), onPressed: () {}),
-        ],
+        // actions: [
+        //   IconButton(icon: const Icon(Icons.search, color: Colors.black), onPressed: () {}),
+        // ],
       ),
       body: Column(
         children: [

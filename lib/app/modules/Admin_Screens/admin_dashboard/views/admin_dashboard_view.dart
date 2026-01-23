@@ -184,76 +184,77 @@ class AdminDashboardView extends GetView<AdminDashboardController> {
             const SizedBox(height: 10),
             
             // 1. Owner Access Card (Welcome)
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(30),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.08),
-                    blurRadius: 24,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Stack(
-                clipBehavior: Clip.none,
-                children: [
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'OWNER ACCESS',
-                        style: TextStyle(
-                          color: Colors.grey[400],
-                          fontSize: 11, // Small caps look
-                          fontWeight: FontWeight.bold,
-                          letterSpacing: 2.0,
+            // 1. Dynamic Greeting Card (Animated)
+            Obx(() => AnimatedSize(
+              duration: const Duration(milliseconds: 600),
+              curve: Curves.easeInOutBack,
+              child: controller.showGreetingCard.value
+                  ? Container(
+                      width: double.infinity,
+                      margin: const EdgeInsets.only(bottom: 20),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFF1E232C), Color(0xFF2C3E50)],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
                         ),
-                      ),
-                      const SizedBox(height: 16),
-                      // Responsive Text wrapper
-                      const Wrap(
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          Text(
-                            'Hi, Admin',
-                            style: TextStyle(
-                              fontSize: 32, // Big bold font
-                              fontWeight: FontWeight.bold,
-                              color: Color(0xFF1E232C),
-                              height: 1.0,
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Text(
-                            '👋',
-                            style: TextStyle(fontSize: 28),
+                        borderRadius: BorderRadius.circular(30),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 20,
+                            offset: const Offset(0, 10),
                           ),
                         ],
                       ),
-                    ],
-                  ),
-                  // Watermark / Decoration (Faded Logo/Icon)
-                  Positioned(
-                    right: -10,
-                    top: -10,
-                    child: Opacity(
-                      opacity: 0.05,
-                      child: Icon(
-                        Icons.diamond_outlined, // Placeholder for geometric logo
-                        size: 90,
-                        color: Colors.red[300],
+                      child: Stack(
+                        clipBehavior: Clip.none,
+                        children: [
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                controller.greeting.toUpperCase(),
+                                style: TextStyle(
+                                  color: Colors.white.withOpacity(0.7),
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: 2.0,
+                                ),
+                              ),
+                              const SizedBox(height: 12),
+                              Text(
+                                controller.shopName.value,
+                                style: const TextStyle(
+                                  fontSize: 32,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white,
+                                  height: 1.1,
+                                ),
+                              ),
+                            ],
+                          ),
+                          // Animated Background Element
+                          Positioned(
+                            right: -20,
+                            top: -20,
+                            child: Opacity(
+                              opacity: 0.1,
+                              child: Icon(
+                                Icons.storefront_rounded,
+                                size: 120,
+                                color: Colors.white,
+                              ),
+                            ),
+                          )
+                        ],
                       ),
-                    ),
-                  )
-                ],
-              ),
-            ),
+                    )
+                  : const SizedBox.shrink(),
+            )),
 
-            const SizedBox(height: 20),
+            // const SizedBox(height: 20),
 
             // 2. Performance Overview Card
             Container(

@@ -6,7 +6,7 @@ class NotificationModel {
   final String body;
   final String timeAgo;
   final NotificationType type;
-  final bool isRead;
+  bool isRead;
 
   NotificationModel({
     required this.id,

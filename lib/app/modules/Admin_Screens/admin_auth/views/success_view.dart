@@ -19,7 +19,7 @@ class _SuccessViewState extends State<SuccessView> {
   void initState() {
     super.initState();
     // Start animation sequence
-    Timer(const Duration(seconds: 5), () {
+    Timer(const Duration(seconds: 2), () {
       if (mounted) {
         setState(() {
           _showSuccessContent = false;

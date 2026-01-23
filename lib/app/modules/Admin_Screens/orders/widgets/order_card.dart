@@ -132,7 +132,7 @@ class OrderCard extends StatelessWidget {
             icon: Icons.person_outline,
             label: 'SERVICE PROVIDER',
             customContent: GestureDetector(
-               onTap: onChangeProvider,
+               onTap: order.status == OrderStatus.pending ? onChangeProvider : null,
                child: RichText(
                  text: TextSpan(
                    style: const TextStyle(fontSize: 14, color: Color(0xFF1E232C)),
@@ -140,11 +140,11 @@ class OrderCard extends StatelessWidget {
                      TextSpan(text: '${order.serviceProviderRole}: ', style: const TextStyle(fontWeight: FontWeight.w500)),
                      TextSpan(
                        text: order.serviceProviderName, 
-                       style: const TextStyle(
+                       style: TextStyle(
                          fontWeight: FontWeight.bold, 
-                         color: Color(0xFFE53935), // Red highlighting as requested
-                         decoration: TextDecoration.underline,
-                         decorationColor: Color(0xFFE53935), 
+                         color: order.status == OrderStatus.pending ? const Color(0xFFE53935) : const Color(0xFF1E232C), // Red only if editable
+                        //  decoration: TextDecoration.underline,
+                         decorationColor: const Color(0xFFE53935), 
                        )
                      ),
                    ],

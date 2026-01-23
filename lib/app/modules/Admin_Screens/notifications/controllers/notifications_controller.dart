@@ -58,7 +58,18 @@ class NotificationsController extends GetxController {
       notifications.where((n) => !n.timeAgo.contains('m ago') && !n.timeAgo.contains('h ago') && !n.timeAgo.contains('1d ago')).toList();
 
 
+  void markAllAsRead() {
+    for (var notification in notifications) {
+      notification.isRead = true;
+    }
+    notifications.refresh(); 
+  }
+
   void handleNotificationTap(NotificationModel notification) {
+    // Mark specific notification as read on tap
+    notification.isRead = true;
+    notifications.refresh();
+
     switch (notification.type) {
       case NotificationType.booking:
         // Navigate to Orders Tab in Dashboard

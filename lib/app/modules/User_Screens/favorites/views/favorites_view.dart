@@ -73,6 +73,18 @@ class FavoritesView extends GetView<FavoritesController> {
                 reviews: salon['reviews'],
                 status: salon['status'],
                 onTap: () {
+                   if (salon['status']?.toString().toLowerCase() == 'closed') {
+                    Get.snackbar(
+                      'Shop Closed', 
+                      'This salon is currently closed and not accepting bookings.',
+                      snackPosition: SnackPosition.BOTTOM,
+                      margin: const EdgeInsets.all(20),
+                      backgroundColor: Colors.black87,
+                      colorText: Colors.white,
+                      duration: const Duration(seconds: 2),
+                    );
+                    return;
+                   }
                    Get.toNamed(AppRoutes.SALON_DETAILS, arguments: salon);
                 },
                 onFavoriteTap: () {

@@ -76,14 +76,66 @@ class BookingController extends GetxController {
 
   final providers = ['Any Provider', 'Vignesh', 'Prasad', 'Ram', 'Pramod'];
 
-  final timeSlots = [
-    '06:00 AM', '07:00 AM', '08:00 AM', 
-    '09:00 AM', '10:00 AM', '11:00 AM',
-    '12:00 PM', '02:00 PM', '03:00 PM',
-    '04:00 PM', '05:00 PM', '06:00 PM',
-    '07:00 PM', '08:00 PM', '09:00 PM',
-    '10:00 PM', '11:00 PM'
-  ];
+  // Dynamic Time Slots
+  final timeSlots = <String>[].obs;
+
+  void generateTimeSlots() {
+    timeSlots.clear();
+    
+    if (selectedDate.value == null) return;
+
+    final date = selectedDate.value!;
+    final dayCode = DateFormat('E').format(date); // Mon, Tue, etc.
+    final timings = salonData['timings'] as Map<String, dynamic>?;
+
+    if (timings == null || !timings.containsKey(dayCode)) {
+      // Fallback or default timings if none provided
+       _generateDefaultSlots();
+       return;
+    }
+
+    final dayTiming = timings[dayCode];
+    if (dayTiming == null || dayTiming['isClosed'] == true) {
+      // Shop is closed today
+      return; 
+    }
+
+    final startStr = dayTiming['start'] as String?;
+    final endStr = dayTiming['end'] as String?;
+
+    if (startStr != null && endStr != null) {
+      try {
+        final format = DateFormat("hh:mm a");
+        final startTime = format.parse(startStr);
+        final endTime = format.parse(endStr);
+        
+        // Generate hourly slots
+        var currentSlot = DateTime(date.year, date.month, date.day, startTime.hour, startTime.minute);
+        // End time needs to be on the same day for comparison logic or handle overnight separately (assuming same day for now)
+        var endSlot = DateTime(date.year, date.month, date.day, endTime.hour, endTime.minute);
+        
+        // Logic to generate slots every hour
+        while (currentSlot.isBefore(endSlot)) {
+           timeSlots.add(DateFormat("hh:mm a").format(currentSlot));
+           currentSlot = currentSlot.add(const Duration(hours: 1));
+        }
+      } catch (e) {
+        print("Error parsing start/end time: $e");
+        _generateDefaultSlots();
+      }
+    } else {
+       _generateDefaultSlots();
+    }
+  }
+
+  void _generateDefaultSlots() {
+    timeSlots.addAll([
+      '09:00 AM', '10:00 AM', '11:00 AM',
+      '12:00 PM', '02:00 PM', '03:00 PM',
+      '04:00 PM', '05:00 PM', '06:00 PM',
+      '07:00 PM', '08:00 PM'
+    ]);
+  }
 
   @override
   void onInit() {
@@ -92,12 +144,11 @@ class BookingController extends GetxController {
     // Default to Today
     selectedDate.value = DateTime.now();
     
-    // Select default time immediately
-    _selectDefaultTime();
-    
-    // Listen to date changes to reset time
+    // Listen to date changes to reset time and regenerate slots
     ever(selectedDate, (_) {
-      // If user changes date, let's try to keep selected time if valid, or select new default
+       generateTimeSlots(); // New logic
+       
+       // If user changes date, let's try to keep selected time if valid, or select new default
        if (!isTimeSlotAvailable(selectedTime.value)) {
           selectedTime.value = ''; // Reset if invalid
           _selectDefaultTime();
@@ -108,6 +159,9 @@ class BookingController extends GetxController {
       if (Get.arguments is Map<String, dynamic>) {
          salonData.value = Get.arguments;
          
+         // Regenerate after data load just in case (though listener might fire if date was set)
+         generateTimeSlots();
+
          if (Get.arguments['rescheduleDate'] != null) {
            try {
              if (Get.arguments['rescheduleDate'] is DateTime) {
@@ -118,6 +172,12 @@ class BookingController extends GetxController {
            }
          }
       }
+    }
+    
+    // Initial generation (if not covered by arguments/listener)
+    if (timeSlots.isEmpty) {
+      generateTimeSlots();
+      _selectDefaultTime(); 
     }
     
     // Auto-scroll logic (Infinite)

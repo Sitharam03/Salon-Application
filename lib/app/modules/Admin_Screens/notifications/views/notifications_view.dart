@@ -9,71 +9,61 @@ class NotificationsView extends GetView<NotificationsController> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8F9FA),
+      backgroundColor: Colors.white,
       appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
+          onPressed: () => Get.back(),
+        ),
         title: const Text(
           'Notifications',
           style: TextStyle(
-            color: Color(0xFF1E232C),
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
         ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Color(0xFF1E232C)),
-          onPressed: () => Get.back(),
-        ),
-      ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // TODAY
-              Obx(() {
-                 if (controller.todayNotifications.isEmpty) return const SizedBox();
-                 return _buildSection('TODAY', controller.todayNotifications);
-              }),
-
-              // YESTERDAY
-              Obx(() {
-                 if (controller.yesterdayNotifications.isEmpty) return const SizedBox();
-                 return _buildSection('YESTERDAY', controller.yesterdayNotifications);
-              }),
-
-              // PREVIOUS
-              Obx(() {
-                 if (controller.previousNotifications.isEmpty) return const SizedBox();
-                 return _buildSection('PREVIOUS', controller.previousNotifications);
-              }),
-            ],
+        actions: [
+          TextButton(
+            onPressed: controller.markAllAsRead,
+            child: const Text(
+              'Mark all as read',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
           ),
-        ),
+        ],
       ),
-    );
-  }
+      body: Obx(() {
+        if (controller.notifications.isEmpty) {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(Icons.notifications_off_outlined, size: 64, color: Colors.grey[300]),
+                const SizedBox(height: 16),
+                Text(
+                  'No new notifications',
+                  style: TextStyle(color: Colors.grey[500], fontSize: 16),
+                ),
+              ],
+            ),
+          );
+        }
 
-  Widget _buildSection(String title, List<NotificationModel> items) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            color: Color(0xFF6C757D),
-            fontSize: 12,
-            fontWeight: FontWeight.bold,
-            letterSpacing: 1.0,
-          ),
-        ),
-        const SizedBox(height: 12),
-        ...items.map((item) => _buildNotificationCard(item)).toList(),
-        const SizedBox(height: 24),
-      ],
+        return ListView.builder(
+          padding: const EdgeInsets.all(16),
+          itemCount: controller.notifications.length,
+          itemBuilder: (context, index) {
+            final notification = controller.notifications[index];
+            return _buildNotificationCard(notification);
+          },
+        );
+      }),
     );
   }
 
@@ -84,25 +74,18 @@ class NotificationsView extends GetView<NotificationsController> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: _getBackgroundColor(item.type),
           borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: Colors.grey.shade200),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.02),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+          border: Border.all(color: _getBorderColor(item.type).withOpacity(0.3)),
         ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Icon
             Container(
-              padding: const EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: _getIconBgColor(item.type),
+              padding: const EdgeInsets.all(10),
+              decoration: const BoxDecoration(
+                color: Colors.white,
                 shape: BoxShape.circle,
               ),
               child: Icon(
@@ -127,7 +110,7 @@ class NotificationsView extends GetView<NotificationsController> {
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 16,
-                            color: Color(0xFF1E232C),
+                            color: Colors.black,
                           ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
@@ -162,7 +145,7 @@ class NotificationsView extends GetView<NotificationsController> {
                 width: 8,
                 height: 8,
                 decoration: const BoxDecoration(
-                  color: Color(0xFF2979FF),
+                  color: Color(0xFFE31E51), // Pink matching app theme
                   shape: BoxShape.circle,
                 ),
               ),
@@ -172,31 +155,42 @@ class NotificationsView extends GetView<NotificationsController> {
     );
   }
 
-  Color _getIconBgColor(NotificationType type) {
+  Color _getBackgroundColor(NotificationType type) {
     switch (type) {
       case NotificationType.booking:
-        return const Color(0xFFE3F2FD); // Light Blue
+        return const Color(0xFFEFF6FF); // Light Blue (Feedback style)
       case NotificationType.review:
-        return const Color(0xFFFFF3E0); // Light Orange
+        return const Color(0xFFFFF7ED); // Light Orange (Offer style)
       case NotificationType.profile:
         return const Color(0xFFF3E5F5); // Light Purple
-      case NotificationType.other:
       default:
-        return Colors.grey.shade100;
+        return Colors.grey.shade50;
+    }
+  }
+
+  Color _getBorderColor(NotificationType type) {
+    switch (type) {
+      case NotificationType.booking:
+        return Colors.blue; 
+      case NotificationType.review:
+        return Colors.orange;
+      case NotificationType.profile:
+        return Colors.purple;
+      default:
+        return Colors.grey;
     }
   }
 
   Color _getIconColor(NotificationType type) {
     switch (type) {
       case NotificationType.booking:
-        return const Color(0xFF2979FF); // Blue
+        return Colors.blue;
       case NotificationType.review:
-        return const Color(0xFFFF6D00); // Orange
+        return Colors.orange;
       case NotificationType.profile:
-        return const Color(0xFFAA00FF); // Purple
-      case NotificationType.other:
+        return Colors.purple;
       default:
-        return Colors.grey.shade600;
+        return Colors.grey;
     }
   }
 
@@ -207,8 +201,7 @@ class NotificationsView extends GetView<NotificationsController> {
       case NotificationType.review:
         return Icons.star;
       case NotificationType.profile:
-        return Icons.verified;
-      case NotificationType.other:
+        return Icons.person;
       default:
         return Icons.notifications;
     }

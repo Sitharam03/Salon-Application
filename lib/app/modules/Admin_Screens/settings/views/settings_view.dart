@@ -150,7 +150,7 @@ class SettingsView extends GetView<SettingsController> {
               
               // Logout Button
               GestureDetector(
-                onTap: controller.logout,
+                onTap: controller.deleteAccount,
                 child: Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(vertical: 16),
@@ -162,10 +162,10 @@ class SettingsView extends GetView<SettingsController> {
                   child: const Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(Icons.logout, color: Color(0xFFE22424)),
+                      Icon(Icons.delete_forever, color: Color(0xFFE22424)),
                       SizedBox(width: 8),
                       Text(
-                        'Log Out',
+                        'Delete Account',
                         style: TextStyle(
                           color: Color(0xFFE22424),
                           fontWeight: FontWeight.bold,

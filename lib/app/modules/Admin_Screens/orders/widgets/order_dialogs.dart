@@ -54,10 +54,10 @@ class AcceptOrderDialog extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {
-                  Get.back();
-                  onConfirm();
-                },
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                    onConfirm();
+                  },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color(0xFFE53935),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -171,7 +171,7 @@ class _RejectOrderDialogState extends State<RejectOrderDialog> {
                       width: double.infinity,
                       child: ElevatedButton(
                         onPressed: () {
-                           Get.back();
+                           Navigator.of(context).pop();
                            String finalReason = selectedReason == 'Other (Enter manually)' ? commentController.text : selectedReason;
                            if (finalReason.isEmpty) finalReason = "Booking Rejected";
                            widget.onConfirm(finalReason);
@@ -297,7 +297,7 @@ class _ChangeProviderDialogState extends State<ChangeProviderDialog> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                     Get.back();
+                     Navigator.of(context).pop();
                      final selected = providers.firstWhere((p) => p['id'] == selectedProviderId);
                      widget.onConfirm(selected['name']!, selected['role']!);
                   },

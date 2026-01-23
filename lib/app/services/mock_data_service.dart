@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'package:salon/app/data/models/order_model.dart';
+import 'package:salon/app/data/models/service_model.dart';
 
 class MockDataService extends GetxService {
   // Singleton pattern is handled by Get.put/find, but we can also use static for easier access if preferred.
@@ -16,6 +17,16 @@ class MockDataService extends GetxService {
       'lng': 78.3462,
       'distance': 0.0, 
       'categories': ['Haircut', 'Massage', 'Manicure'],
+      'status': 'Open',
+      'timings': {
+        'Mon': {'start': '09:00 AM', 'end': '09:00 PM'},
+        'Tue': {'start': '09:00 AM', 'end': '09:00 PM'},
+        'Wed': {'start': '09:00 AM', 'end': '09:00 PM'},
+        'Thu': {'start': '09:00 AM', 'end': '09:00 PM'},
+        'Fri': {'start': '09:00 AM', 'end': '09:00 PM'},
+        'Sat': {'start': '08:00 AM', 'end': '10:00 PM'},
+        'Sun': {'start': '10:00 AM', 'end': '06:00 PM', 'isClosed': true}, // Example closed on Sunday
+      }
     },
     {
       'name': 'Green Trends',
@@ -26,6 +37,16 @@ class MockDataService extends GetxService {
       'lng': 78.3568,
       'distance': 0.0,
       'categories': ['Haircut', 'Makeup'],
+      'status': 'Closed',
+      'timings': {
+        'Mon': {'start': '10:00 AM', 'end': '08:00 PM'},
+        'Tue': {'start': '10:00 AM', 'end': '08:00 PM'},
+        'Wed': {'start': '10:00 AM', 'end': '08:00 PM'},
+        'Thu': {'start': '10:00 AM', 'end': '08:00 PM'},
+        'Fri': {'start': '10:00 AM', 'end': '08:00 PM'},
+        'Sat': {'start': '10:00 AM', 'end': '08:00 PM'},
+        'Sun': {'start': '10:00 AM', 'end': '08:00 PM'}, 
+      }
     },
     {
       'name': 'Lakme Salon',
@@ -36,8 +57,18 @@ class MockDataService extends GetxService {
       'lng': 78.3489,
       'distance': 0.0,
       'categories': ['Makeup', 'Manicure'],
+      'status': 'Open',
+       'timings': {
+        'Mon': {'start': '09:00 AM', 'end': '06:00 PM'},
+        'Tue': {'start': '09:00 AM', 'end': '06:00 PM'},
+        'Wed': {'start': '09:00 AM', 'end': '06:00 PM'},
+        'Thu': {'start': '09:00 AM', 'end': '06:00 PM'},
+        'Fri': {'start': '09:00 AM', 'end': '06:00 PM'},
+        'Sat': {'start': '09:00 AM', 'end': '06:00 PM'},
+        'Sun': {'start': '09:00 AM', 'end': '06:00 PM'},
+      }
     },
-     {
+    {
       'name': 'Toni & Guy',
       'location': 'Jubilee Hills, Hyderabad',
       'rating': 4.8,
@@ -46,6 +77,16 @@ class MockDataService extends GetxService {
       'lng': 78.4079,
       'distance': 0.0,
       'categories': ['Haircut', 'Massage', 'Manicure', 'Makeup'],
+      'status': 'Closed',
+      'timings': {
+        'Mon': {'start': '11:00 AM', 'end': '11:00 PM'},
+        'Tue': {'start': '11:00 AM', 'end': '11:00 PM'},
+        'Wed': {'start': '11:00 AM', 'end': '11:00 PM'},
+        'Thu': {'start': '11:00 AM', 'end': '11:00 PM'},
+        'Fri': {'start': '11:00 AM', 'end': '11:00 PM'},
+        'Sat': {'start': '11:00 AM', 'end': '11:00 PM'},
+        'Sun': {'start': '11:00 AM', 'end': '11:00 PM'},
+      }
     },
   ].obs;
 
@@ -105,7 +146,32 @@ class MockDataService extends GetxService {
         date: old.date,
         time: old.time,
         services: old.services,
+        serviceProviderName: old.serviceProviderName,
+        serviceProviderRole: old.serviceProviderRole,
+        serviceProviderImage: old.serviceProviderImage,
       );
+    }
+  }
+
+  // --- Services Data (Global) ---
+  final categories = ['Hair', 'Beard', 'Facial & Spa', 'Skin Care', 'Massage'].obs;
+  
+  final services = <ServiceModel>[
+    ServiceModel(id: '1', name: 'Hair Cut', category: 'Hair', gender: 'Men', duration: '45 Mins', price: 25.0, description: 'Standard haircut'),
+    ServiceModel(id: '2', name: 'Hair Coloring', category: 'Hair', gender: 'Men', duration: '90 Mins', price: 60.0),
+    ServiceModel(id: '3', name: 'Beard Trim', category: 'Beard', gender: 'Men', duration: '30 Mins', price: 15.0),
+    ServiceModel(id: '4', name: 'Manicure', category: 'Facial & Spa', gender: 'Women', duration: '45 Mins', price: 30.0),
+    ServiceModel(id: '5', name: 'Facial', category: 'Facial & Spa', gender: 'Women', duration: '60 Mins', price: 50.0),
+  ].obs;
+
+  void addService(ServiceModel service) {
+    services.add(service);
+  }
+
+  void updateService(ServiceModel service) {
+    int index = services.indexWhere((s) => s.id == service.id);
+    if (index != -1) {
+      services[index] = service;
     }
   }
 }

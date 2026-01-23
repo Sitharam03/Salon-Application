@@ -148,7 +148,7 @@ class BookingSuccessView extends GetView<BookingController> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () {
-                     Get.offAllNamed(AppRoutes.MY_BOOKINGS);
+                     Get.offAllNamed(AppRoutes.HOME, arguments: {'initialIndex': 1});
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.amber, 
